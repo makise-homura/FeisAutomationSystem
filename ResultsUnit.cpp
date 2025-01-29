@@ -33,7 +33,8 @@ enum QualificationSentence
 
 const int MaxQualified[TotalDances] =
 //  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
-  { 0,     0,     0,     3,     3,     3,     3,     3,     3,     3,     3,     2,     2,     2,     2,     2,     2,     2,     2,
+//{ 0,     0,     0,     3,     3,     3,     3,     3,     3,     3,     3,     2,     2,     2,     2,     2,     2,     2,     2, -- current WIDA rules allow only one participant to be qualified
+  { 0,     0,     0,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
 //  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR Ceili
     1,     1,     1,     1,     1,     1,     1,     1,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0    };
 
