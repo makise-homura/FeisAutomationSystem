@@ -1,0 +1,6 @@
+*.res
+*.obj
+*.exe
+*.ddp
+*.~*
+*.tds
