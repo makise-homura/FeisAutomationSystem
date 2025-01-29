@@ -162,9 +162,9 @@ object NumbersForm: TNumbersForm
       OnClick = ButtonCreateBPIOClick
     end
     object ButtonCreateSchools: TButton
-      Left = 8
+      Left = 224
       Top = 344
-      Width = 593
+      Width = 377
       Height = 25
       Caption = #1057#1086#1079#1076#1072#1090#1100' '#1089#1087#1080#1089#1086#1082' '#1087#1086' '#1096#1082#1086#1083#1072#1084
       ParentShowHint = False
@@ -423,6 +423,16 @@ object NumbersForm: TNumbersForm
         TabOrder = 15
         OnClick = ButtonFromWIDAClick
       end
+    end
+    object CheckBoxSortSchools: TCheckBox
+      Left = 16
+      Top = 344
+      Width = 201
+      Height = 25
+      Caption = #1057#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1087#1086' '#1096#1082#1086#1083#1072#1084
+      Checked = True
+      State = cbChecked
+      TabOrder = 7
     end
   end
   object ButtonClose: TButton

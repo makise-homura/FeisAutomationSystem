@@ -70,6 +70,7 @@ __published:	// IDE-managed Components
   TListBox *ListNonWIDA;
   TButton *ButtonToWIDA;
   TButton *ButtonFromWIDA;
+        TCheckBox *CheckBoxSortSchools;
   void __fastcall ButtonCreateNumbersClick(TObject *Sender);
   void __fastcall ButtonCloseClick(TObject *Sender);
   void __fastcall ButtonCreateEmptyResultsClick(TObject *Sender);

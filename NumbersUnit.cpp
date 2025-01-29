@@ -1034,7 +1034,7 @@ bool IsWIDA(TStrings *SchoolsWIDA, TDancer *D)
   return SchoolsWIDA->IndexOf(D->School) >= 0;
 }
 //---------------------------------------------------------------------------
-bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups, int CostRegW = 0, int CostSoloW = 0, int CostFigureW = 0, int CostPremW = 0, int CostChampW = 0, int CostEuroW = 0, int CostUnlimW = 0, int CostRegNW = 0, int CostSoloNW = 0, int CostFigureNW = 0, int CostPremNW = 0, int CostChampNW = 0, int CostEuroNW = 0, int CostUnlimNW = 0, TStrings *SchoolsWIDA = NULL)
+bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups, int CostRegW = 0, int CostSoloW = 0, int CostFigureW = 0, int CostPremW = 0, int CostChampW = 0, int CostEuroW = 0, int CostUnlimW = 0, int CostRegNW = 0, int CostSoloNW = 0, int CostFigureNW = 0, int CostPremNW = 0, int CostChampNW = 0, int CostEuroNW = 0, int CostUnlimNW = 0, TStrings *SchoolsWIDA = NULL, bool SortBySchools = false)
 {
   Warning->Caption = "Подготовка файла...";
   Warning->Show();
@@ -1238,10 +1238,12 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   {
     if (WithAgeGroups)
     {
+      if (SortBySchools) OutputExcel->Sort(0, 1, 21, Row - 1, 3, xlAscending);
       OutputExcel->SelectRange(0, 1, 21, Row - 1);
     }
     else
     {
+      if (SortBySchools) OutputExcel->Sort(0, 1, 17, Row - 1, 3, xlAscending);
       OutputExcel->SelectRange(0, 1, 17, Row - 1);
     }
     OutputExcel->SetBkColor(clPaleYellow);
@@ -1291,7 +1293,7 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   }
   if (Row > StartRow)
   {
-    OutputExcel->Sort(0, StartRow, 17, Row - StartRow, 0, xlAscending);
+    OutputExcel->Sort(0, StartRow, 17, Row - StartRow, SortBySchools ? 3 : 0, xlAscending);
     for (int i = StartRow; i < Row; ++i)
     {
       // We can't sort with joined cells and "T" in number, so do it here, after sort.
@@ -1344,6 +1346,7 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
       ++Row;
     }
 
+    if (SortBySchools) OutputExcel->Sort(3, StartRow, 3, Row - StartRow, 0, xlAscending);
     OutputExcel->SelectRange(3, StartRow, 3, Row - StartRow);
     OutputExcel->SetBkColor(clPaleYellow);
     OutputExcel->SetBorder(xlEdgeTop,          xlContinuous, xlThin);
@@ -1410,7 +1413,7 @@ void __fastcall TNumbersForm::ButtonCreateBPIOClick(TObject *Sender)
 void __fastcall TNumbersForm::ButtonCreateSchoolClick(TObject *Sender)
 {
   if (!SaveDialogSchools->Execute()) return;
-  if (ExportBPIOGeneric(SaveDialogSchools->FileName, PanelWarning, true, SpinCostReg->Value, SpinCostSolo->Value, SpinCostFigure->Value, SpinCostPremier->Value, SpinCostChamp->Value, SpinCostEuro->Value, SpinCostUnlim->Value, SpinCostRegNW->Value, SpinCostSoloNW->Value, SpinCostFigureNW->Value, SpinCostPremierNW->Value, SpinCostChampNW->Value, SpinCostEuroNW->Value, SpinCostUnlimNW->Value, ListWIDA->Items))
+  if (ExportBPIOGeneric(SaveDialogSchools->FileName, PanelWarning, true, SpinCostReg->Value, SpinCostSolo->Value, SpinCostFigure->Value, SpinCostPremier->Value, SpinCostChamp->Value, SpinCostEuro->Value, SpinCostUnlim->Value, SpinCostRegNW->Value, SpinCostSoloNW->Value, SpinCostFigureNW->Value, SpinCostPremierNW->Value, SpinCostChampNW->Value, SpinCostEuroNW->Value, SpinCostUnlimNW->Value, ListWIDA->Items, CheckBoxSortSchools->Checked))
     Application->MessageBox("Создание списка завершено.", "Экспорт списка по школам", MB_OK);
 }
 //---------------------------------------------------------------------------
@@ -1458,4 +1461,5 @@ void __fastcall TNumbersForm::ButtonToWIDAClick(TObject *Sender)
   }
 }
 //---------------------------------------------------------------------------
+
 
