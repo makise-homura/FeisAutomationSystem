@@ -1320,7 +1320,7 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
       ++Row;
     }
 
-    OutputExcel->SelectRange(2, StartRow, 2, Row - StartRow);
+    OutputExcel->SelectRange(3, StartRow, 3, Row - StartRow);
     OutputExcel->SetBkColor(clPaleYellow);
     OutputExcel->SetBorder(xlEdgeTop,          xlContinuous, xlThin);
     OutputExcel->SetBorder(xlEdgeBottom,       xlContinuous, xlThin);
