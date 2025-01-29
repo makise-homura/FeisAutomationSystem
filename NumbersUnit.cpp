@@ -1106,11 +1106,15 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
     if (Dancer->isGroup) continue;
     bool       *D = Dancer->Dances;
     AnsiString *G = Dancer->AgeGroup;
+    AnsiString School = Dancer->School;
+    OutputExcel->SelectCell(Row, 3);
+    OutputExcel->SetFontColor(SchoolsWIDA->IndexOf(School) >= 0 ? clBlack : clRed);
+    if (SchoolsWIDA->IndexOf(School) < 0) School = StringReplace(School, "(Non-WIDA) ", "", TReplaceFlags() << rfReplaceAll);
     if(WithAgeGroups)
     {
       OutputRow
       (
-        Row, OutputExcel, Dancer->Number, Dancer->Age, Dancer->Name, Dancer->School,
+        Row, OutputExcel, Dancer->Number, Dancer->Age, Dancer->Name, School,
         MakeBPIOEx(D[Jump23],               G[Jump23],              false,                 "",                    false,                  "",                     false,              ""),                 //jump 23
         MakeBPIOEx(D[ModernSet],            G[ModernSet],           false,                 "",                    false,                  "",                     false,              ""),                 //mod set
         MakeBPIOEx(D[TrebleReel],           G[TrebleReel],          false,                 "",                    false,                  "",                     false,              ""),                 //treb reel
@@ -1198,7 +1202,7 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
     {
       OutputRow
       (
-        Row++, OutputExcel, Dancer->Number, Dancer->Age, Dancer->Name, Dancer->School,
+        Row++, OutputExcel, Dancer->Number, Dancer->Age, Dancer->Name, School,
         MakeBPIO(D[Jump23],               false,                 false,                  false),              //jump 23
         MakeBPIO(D[ModernSet],            false,                 false,                  false),              //mod set
         MakeBPIO(D[TrebleReel],           false,                 false,                  false),              //treb reel
@@ -1260,7 +1264,10 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
       if (Dancer->Dances[j])
       {
         AnsiString Dance = DanceNames[j] + " " + GroupToString(Dancer->AgeGroup[j]);
-        OutputRow(Row, OutputExcel, Dancer->Number, "", Dance, Dancer->School, Dancer->Name, "", "", "", "", "", "", "", "", "", "", "", "");
+        AnsiString School = Dancer->School;
+        OutputExcel->SelectCell(Row, 3);
+        OutputExcel->SetFontColor(SchoolsWIDA->IndexOf(School) >= 0 ? clBlack : clRed);
+        OutputRow(Row, OutputExcel, Dancer->Number, "", Dance, SchoolsWIDA->IndexOf(School) >= 0 ? School : StringReplace(School, "(Non-WIDA) ", "", TReplaceFlags() << rfReplaceAll), Dancer->Name, "", "", "", "", "", "", "", "", "", "", "", "");
         //SchoolDances->Add(Dancer->School, 1);
         ++Row;
         break;
@@ -1316,7 +1323,9 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
       OutputExcel->SelectCell(Row, 5);
       OutputExcel->SetFontColor(SchoolsWIDA->IndexOf(School) >= 0 ? clBlack : clRed);
       OutputExcel->PutCell(Row, 5, (AnsiString)(dances * (SchoolsWIDA->IndexOf(School) >= 0 ? CostEuroW : CostEuroNW)));
-      OutputExcel->PutCell(Row, 3, School);
+      OutputExcel->SelectCell(Row, 3);
+      OutputExcel->SetFontColor(SchoolsWIDA->IndexOf(School) >= 0 ? clBlack : clRed);
+      OutputExcel->PutCell(Row, 3, SchoolsWIDA->IndexOf(School) >= 0 ? School : StringReplace(School, "(Non-WIDA) ", "", TReplaceFlags() << rfReplaceAll));
       ++Row;
     }
 
