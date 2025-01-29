@@ -1291,9 +1291,10 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   if(WithAgeGroups)
   {
     ++Row;
-    OutputExcel->PutCell(Row, 2,  "Сумма");
     OutputExcel->PutCell(Row, 3,  "Название школы");
-    OutputExcel->SelectRange(2, Row, 2, 1);
+    OutputExcel->PutCell(Row, 4,  "Евро");
+    OutputExcel->PutCell(Row, 5,  "Рубли");
+    OutputExcel->SelectRange(3, Row, 3, 1);
     OutputExcel->SetAlignment(xlCenter, xlCenter);
     OutputExcel->SetFontBold();
     OutputExcel->SetBkColor(clGreen);
@@ -1309,9 +1310,12 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
     AnsiString School;
     while (SchoolDances->Get(School, dances))
     {
-      OutputExcel->SelectCell(Row, 2);
+      OutputExcel->SelectCell(Row, 4);
       OutputExcel->SetFontColor(SchoolsWIDA->IndexOf(School) >= 0 ? clBlack : clRed);
-      OutputExcel->PutCell(Row, 2, (AnsiString)dances + " Euro / " + (AnsiString)(dances * (SchoolsWIDA->IndexOf(School) >= 0 ? CostEuroW : CostEuroNW)) + " RUB");
+      OutputExcel->PutCell(Row, 4, (AnsiString)dances);
+      OutputExcel->SelectCell(Row, 5);
+      OutputExcel->SetFontColor(SchoolsWIDA->IndexOf(School) >= 0 ? clBlack : clRed);
+      OutputExcel->PutCell(Row, 5, (AnsiString)(dances * (SchoolsWIDA->IndexOf(School) >= 0 ? CostEuroW : CostEuroNW)));
       OutputExcel->PutCell(Row, 3, School);
       ++Row;
     }
