@@ -1068,10 +1068,14 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   OutputExcel->SetColWidth(16, 6);
   if (WithAgeGroups)
   {
-    OutputExcel->SetColWidth(17, 29);
-    OutputExcel->PutCell(0, 17, "Total");
+    OutputExcel->SetColWidth(17, 6);
+    OutputExcel->PutCell(0, 17, "Евро");
     OutputExcel->SetColWidth(18, 6);
-    OutputExcel->PutCell(0, 18, "Regs");
+    OutputExcel->PutCell(0, 18, "Рубли");
+    OutputExcel->SetColWidth(19, 10);
+    OutputExcel->PutCell(0, 19, "Безлимит");
+    OutputExcel->SetColWidth(20, 6);
+    OutputExcel->PutCell(0, 20, "Танцы");
   }
 
   int Row = 0;
@@ -1082,7 +1086,7 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
                                 "Treble", "Horn", "Trad", "Prem", "PreCh", "Champ");
   if (WithAgeGroups)
   {
-    OutputExcel->SelectRange(0, 0, 19, 1);
+    OutputExcel->SelectRange(0, 0, 21, 1);
   }
   else
   {
@@ -1186,15 +1190,26 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
         }
       }
 
-      OutputExcel->SelectCell(Row, 17);
       if (CostUnlim > 0 && dances >= CostUnlim)
       {
         dances = CostUnlim;
+        OutputExcel->SelectCell(Row, 17);
+        OutputExcel->SetFontBold();
+        OutputExcel->SelectCell(Row, 18);
+        OutputExcel->SetFontBold();
+        OutputExcel->SelectCell(Row, 19);
         OutputExcel->SetFontBold();
       }
+      OutputExcel->SelectCell(Row, 17);
       OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
-      OutputExcel->PutCell(Row, 17, (AnsiString)dances + " Euro / " + (AnsiString)(dances * CostEuro) + " RUB" + (dances == CostUnlim ? " (безлимит)" : ""));
-      OutputExcel->PutCell(Row, 18, (AnsiString)regs);
+      OutputExcel->SelectCell(Row, 18);
+      OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
+      OutputExcel->SelectCell(Row, 19);
+      OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
+      OutputExcel->PutCell(Row, 17, (AnsiString)dances);
+      OutputExcel->PutCell(Row, 18, (AnsiString)(dances * CostEuro));
+      OutputExcel->PutCell(Row, 19, (dances == CostUnlim ? "Безлимит" : ""));
+      OutputExcel->PutCell(Row, 20, (AnsiString)regs);
       SchoolDances->Add(Dancer->School, dances);
       Row++;
     }
@@ -1223,7 +1238,7 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   {
     if (WithAgeGroups)
     {
-      OutputExcel->SelectRange(0, 1, 19, Row - 1);
+      OutputExcel->SelectRange(0, 1, 21, Row - 1);
     }
     else
     {
