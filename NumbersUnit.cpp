@@ -263,6 +263,7 @@ bool ExportSchedule(AnsiString FileName, TPanel *Warning)
   FormSchedule(&Row, OutputExcel, Warning, "Results",              clPaleRed,  0, nil,                 nil,              nil,               nil,             "",     "",      "",       ""     );
 
   // Finalize
+  OutputExcel->SelectRange(0, 0, 1, 1);
   delete OutputExcel;
   Warning->Hide();
   return true;
@@ -542,6 +543,7 @@ bool ExportResults(AnsiString FileName, TPanel *Warning, bool SaveResults, bool 
   if (Row > 2) { InitSheet(OutputExcel, 6, StdHeaderS, StdHeaderW); ClearAllDatabase = false; }
   else OutputExcel->DeleteSheet(&ClearAllDatabase);
 
+  OutputExcel->SelectRange(0, 0, 1, 1);
   delete OutputExcel;
   Warning->Hide();
   return true;
@@ -692,6 +694,7 @@ bool ExportStageLists(AnsiString FileName, TPanel *Warning)
   Row = OutputStageTable(Row, Warning, OutputExcel, IntermedPremiership, "",      "Int Prem");
   Row = OutputStageTable(Row, Warning, OutputExcel, PreChampionship,     "",      "Pre championship");
   Row = OutputStageTable(Row, Warning, OutputExcel, Championship,        "",      "Championship");
+  OutputExcel->SelectRange(0, 0, 1, 1);
   delete OutputExcel;
   Warning->Hide();
   return true;
@@ -1000,6 +1003,7 @@ bool ExportNumbers(AnsiString FileName, TPanel *Warning, int AdditionalSolo, int
     ++CurrentPos;
   }
 
+  OutputExcel->SelectRange(0, 0, 1, 1);
   delete OutputExcel;
   Warning->Hide();
   return true;
@@ -1374,6 +1378,8 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
     }
   }
 
+  OutputExcel->SelectSheet("Все школы");
+  OutputExcel->SelectRange(0, 0, 1, 1);
   delete OutputExcel;
   Warning->Hide();
   return true;
