@@ -1071,29 +1071,8 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
 
   int Row = 0;
 
-  // Step 1. Add solo header
-  OutputRow(Row++, OutputExcel, "№","Возр.","Имя и фамилия", "Название школы",
-                                "J23", "ModSet", "TrReel", "Reel", "Light", "Single", "Slip",
-                                "Treble", "Horn", "Trad", "Prem", "PreCh", "Champ");
-  if (WithAgeGroups)
-  {
-    OutputExcel->SelectRange(0, 0, 21, 1);
-  }
-  else
-  {
-    OutputExcel->SelectRange(0, 0, 17, 1);
-  }
-  OutputExcel->SetAlignment(xlCenter, xlCenter);
-  OutputExcel->SetFontBold();
-  OutputExcel->SetBkColor(clGreen);
-  OutputExcel->SetFontColor(clWhite);
-  OutputExcel->SetBorder(xlEdgeTop,          xlContinuous, xlThin);
-  OutputExcel->SetBorder(xlEdgeBottom,       xlContinuous, xlThin);
-  OutputExcel->SetBorder(xlEdgeLeft,         xlContinuous, xlThin);
-  OutputExcel->SetBorder(xlEdgeRight,        xlContinuous, xlThin);
-  OutputExcel->SetBorder(xlInsideVertical,   xlContinuous, xlThin);
-
-  // Step 2. Add every solo dancer
+  // Add every solo dancer
+  bool HeaderAdded = false;
   TDictDances *SchoolDances = new TDictDances;
   for (int i = 0; i < Database->TotalDancers(); ++i)
   {
@@ -1102,6 +1081,30 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
     bool       *D = Dancer->Dances;
     AnsiString *G = Dancer->AgeGroup;
     AnsiString School = Dancer->School;
+    if(!HeaderAdded)
+    {
+      OutputRow(Row++, OutputExcel, "№","Возр.","Имя и фамилия", "Название школы",
+                                    "J23", "ModSet", "TrReel", "Reel", "Light", "Single", "Slip",
+                                    "Treble", "Horn", "Trad", "Prem", "PreCh", "Champ");
+      if (WithAgeGroups)
+      {
+        OutputExcel->SelectRange(0, 0, 21, 1);
+      }
+      else
+      {
+        OutputExcel->SelectRange(0, 0, 17, 1);
+      }
+      OutputExcel->SetAlignment(xlCenter, xlCenter);
+      OutputExcel->SetFontBold();
+      OutputExcel->SetBkColor(clGreen);
+      OutputExcel->SetFontColor(clWhite);
+      OutputExcel->SetBorder(xlEdgeTop,          xlContinuous, xlThin);
+      OutputExcel->SetBorder(xlEdgeBottom,       xlContinuous, xlThin);
+      OutputExcel->SetBorder(xlEdgeLeft,         xlContinuous, xlThin);
+      OutputExcel->SetBorder(xlEdgeRight,        xlContinuous, xlThin);
+      OutputExcel->SetBorder(xlInsideVertical,   xlContinuous, xlThin);
+      HeaderAdded = true;
+    }
     OutputExcel->SelectCell(Row, 3);
     OutputExcel->SetFontColor(SchoolsWIDA->IndexOf(School) >= 0 ? clBlack : clRed);
     if (SchoolsWIDA->IndexOf(School) < 0) School = StringReplace(School, "(Non-WIDA) ", "", TReplaceFlags() << rfReplaceAll);
@@ -1246,23 +1249,9 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
     if (Row > 2) OutputExcel->SetBorder(xlInsideHorizontal, xlContinuous, xlThin);
   }
 
-  // Step 3. Add teams header
-  OutputRow(++Row, OutputExcel, "№","","Танец", "Название школы", "Участники команды", "", "", "", "", "", "", "", "", "", "", "", "");
-  OutputExcel->SelectRange(0, Row, 17, 1);
-  OutputExcel->SetAlignment(xlCenter, xlCenter);
-  OutputExcel->SetFontBold();
-  OutputExcel->SetBkColor(clGreen);
-  OutputExcel->SetFontColor(clWhite);
-  OutputExcel->SetBorder(xlEdgeTop,          xlContinuous, xlThin);
-  OutputExcel->SetBorder(xlEdgeBottom,       xlContinuous, xlThin);
-  OutputExcel->SetBorder(xlEdgeLeft,         xlContinuous, xlThin);
-  OutputExcel->SetBorder(xlEdgeRight,        xlContinuous, xlThin);
-  OutputExcel->SetBorder(xlInsideVertical,   xlContinuous, xlThin);
-  OutputExcel->SelectRange(0, Row, 2,  1); OutputExcel->Join();
-  OutputExcel->SelectRange(4, Row, 13, 1); OutputExcel->Join();
-
-  // Step 4. Add every team dancer
-  int StartRow = ++Row;
+  // Add every team dancer
+  HeaderAdded = false;
+  int StartRow;
   for (int i = 0; i < Database->TotalDancers(); ++i)
   {
     TDancer *Dancer = Database->GetDancerByIndex(i);
@@ -1273,6 +1262,25 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
       {
         AnsiString Dance = DanceNames[j] + " " + GroupToString(Dancer->AgeGroup[j]);
         AnsiString School = Dancer->School;
+        if(!HeaderAdded)
+        {
+          // Add teams header
+          OutputRow(++Row, OutputExcel, "№","","Танец", "Название школы", "Участники команды", "", "", "", "", "", "", "", "", "", "", "", "");
+          OutputExcel->SelectRange(0, Row, 17, 1);
+          OutputExcel->SetAlignment(xlCenter, xlCenter);
+          OutputExcel->SetFontBold();
+          OutputExcel->SetBkColor(clGreen);
+          OutputExcel->SetFontColor(clWhite);
+          OutputExcel->SetBorder(xlEdgeTop,          xlContinuous, xlThin);
+          OutputExcel->SetBorder(xlEdgeBottom,       xlContinuous, xlThin);
+          OutputExcel->SetBorder(xlEdgeLeft,         xlContinuous, xlThin);
+          OutputExcel->SetBorder(xlEdgeRight,        xlContinuous, xlThin);
+          OutputExcel->SetBorder(xlInsideVertical,   xlContinuous, xlThin);
+          OutputExcel->SelectRange(0, Row, 2,  1); OutputExcel->Join();
+          OutputExcel->SelectRange(4, Row, 13, 1); OutputExcel->Join();
+          HeaderAdded = true;
+          StartRow = ++Row;
+        }
         OutputExcel->SelectCell(Row, 3);
         OutputExcel->SetFontColor(SchoolsWIDA->IndexOf(School) >= 0 ? clBlack : clRed);
         OutputRow(Row, OutputExcel, Dancer->Number, "", Dance, SchoolsWIDA->IndexOf(School) >= 0 ? School : StringReplace(School, "(Non-WIDA) ", "", TReplaceFlags() << rfReplaceAll), Dancer->Name, "", "", "", "", "", "", "", "", "", "", "", "");
@@ -1282,7 +1290,7 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
       }
     }
   }
-  if (Row > StartRow)
+  if (HeaderAdded)
   {
     OutputExcel->Sort(0, StartRow, 17, Row - StartRow, SortBySchools ? 3 : 0, xlAscending);
     for (int i = StartRow; i < Row; ++i)
