@@ -1381,12 +1381,14 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   {
     for(int i = 0; i < SchoolsList->Count; ++i)
     {
+      Warning->Caption = "Запись школы " + (*SchoolsList)[i] + "...";
       OutputExcel->CreateSheet(StringReplace((*SchoolsList)[i], "(Non-WIDA) ", "! ", TReplaceFlags() << rfReplaceAll), ClearXLS);
       ClearXLS = false;
       ExportBPIOPage(OutputExcel, WithAgeGroups, (*SchoolsList)[i], CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, false);
       OutputExcel->DeleteColumn(3);
     }
   }
+  Warning->Caption = "Запись общей страницы...";
   OutputExcel->CreateSheet("Все школы", ClearXLS);
   ExportBPIOPage(OutputExcel, WithAgeGroups, "", CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, SortBySchools);
 
