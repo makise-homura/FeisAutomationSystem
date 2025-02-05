@@ -1348,6 +1348,8 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
     if (Row > StartRow + 1) OutputExcel->SetBorder(xlInsideHorizontal, xlContinuous, xlThin);
   }
 
+  OutputExcel->SelectRange(0, 0, 1, 1);
+
   delete SchoolDances;
 }
 //---------------------------------------------------------------------------
@@ -1381,7 +1383,6 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   ExportBPIOPage(OutputExcel, WithAgeGroups, "", CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, SortBySchools);
 
   OutputExcel->SelectSheet("Все школы");
-  OutputExcel->SelectRange(0, 0, 1, 1);
   delete OutputExcel;
   Warning->Hide();
   return true;
