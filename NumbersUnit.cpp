@@ -1366,17 +1366,19 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
     return false;
   }
 
-  OutputExcel->CreateSheet("Все школы", true);
-  ExportBPIOPage(OutputExcel, WithAgeGroups, "", CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, SortBySchools);
+  bool ClearXLS = true;
   if(WithAgeGroups)
   {
     for(int i = 0; i < SchoolsList->Count; ++i)
     {
-      OutputExcel->CreateSheet(StringReplace((*SchoolsList)[i], "(Non-WIDA) ", "! ", TReplaceFlags() << rfReplaceAll), false);
+      OutputExcel->CreateSheet(StringReplace((*SchoolsList)[i], "(Non-WIDA) ", "! ", TReplaceFlags() << rfReplaceAll), ClearXLS);
+      ClearXLS = false;
       ExportBPIOPage(OutputExcel, WithAgeGroups, (*SchoolsList)[i], CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, false);
       OutputExcel->DeleteColumn(3);
     }
   }
+  OutputExcel->CreateSheet("Все школы", ClearXLS);
+  ExportBPIOPage(OutputExcel, WithAgeGroups, "", CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, SortBySchools);
 
   OutputExcel->SelectSheet("Все школы");
   OutputExcel->SelectRange(0, 0, 1, 1);
@@ -1431,6 +1433,17 @@ void __fastcall TNumbersForm::ButtonCreateBPIOClick(TObject *Sender)
     Application->MessageBox("Создание списка завершено.", "Экспорт BPIO-списка", MB_OK);
 }
 //---------------------------------------------------------------------------
+int __fastcall SchoolSortWrapper(TStringList* List, int Index1, int Index2)
+{
+  // Skip (Non-WIDA) mark
+  AnsiString String1 = StringReplace(List->Strings[Index1], "(Non-WIDA) ", "", TReplaceFlags() << rfReplaceAll);
+  AnsiString String2 = StringReplace(List->Strings[Index2], "(Non-WIDA) ", "", TReplaceFlags() << rfReplaceAll);
+  if(String1 == String2) return 0;
+  // Descending order:
+  if(String1 < String2) return +1;
+  if(String1 > String2) return -1;
+}
+//---------------------------------------------------------------------------
 #pragma argsused
 void __fastcall TNumbersForm::ButtonCreateSchoolClick(TObject *Sender)
 {
@@ -1442,7 +1455,7 @@ void __fastcall TNumbersForm::ButtonCreateSchoolClick(TObject *Sender)
     TDancer *Dancer = Database->GetDancerByIndex(i);
     if (SchoolsList->IndexOf(Dancer->School) < 0) SchoolsList->Add(Dancer->School);
   }
-  SchoolsList->Sort();
+  SchoolsList->CustomSort(SchoolSortWrapper);
   if (ExportBPIOGeneric(SaveDialogSchools->FileName, PanelWarning, true, ListWIDA->Items, CheckBoxSortSchools->Checked, SchoolsList, SpinCostReg->Value, SpinCostSolo->Value, SpinCostFigure->Value, SpinCostPremier->Value, SpinCostChamp->Value, SpinCostEuro->Value, SpinCostUnlim->Value, SpinCostRegNW->Value, SpinCostSoloNW->Value, SpinCostFigureNW->Value, SpinCostPremierNW->Value, SpinCostChampNW->Value, SpinCostEuroNW->Value, SpinCostUnlimNW->Value))
     Application->MessageBox("Создание списка завершено.", "Экспорт списка по школам", MB_OK);
 }
