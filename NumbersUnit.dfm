@@ -1,6 +1,6 @@
 object NumbersForm: TNumbersForm
-  Left = 400
-  Top = 264
+  Left = 229
+  Top = 152
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077' '#1089#1083#1091#1078#1077#1073#1085#1099#1093' '#1092#1072#1081#1083#1086#1074' '#1092#1077#1096#1072

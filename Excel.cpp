@@ -48,6 +48,13 @@ void TExcel::GetRow(AnsiString *Strings, int Row, int Length)
     Strings[i] = GetCell(Row, i);
 }
 //---------------------------------------------------------------------------
+void TExcel::DeleteColumn(int Column)
+{
+  AnsiString Range = (char)('A' + Column);
+  var_Cell = var_Sheet.OlePropertyGet("Range", (Range + ":" + Range).c_str());
+  var_Cell.OleProcedure("Delete");
+}
+//---------------------------------------------------------------------------
 void TExcel::SelectRange(int Column, int Row, int Width, int Height)
 {
   // Column + Width should be less than 26 !
@@ -178,7 +185,7 @@ void TExcel::CreateSheet(AnsiString Name, bool ClearAllDatabase)
     var_Excel.OlePropertyGet("ActiveWorkbook").OlePropertyGet("Worksheets").OleProcedure("Add");
 
   var_Sheet = var_Excel.OlePropertyGet("ActiveSheet");
-  var_Sheet.OlePropertySet("Name", Name.c_str());
+  var_Sheet.OlePropertySet("Name", Name.SubString(0,31).c_str());
 
   var_Sheet.OleProcedure("Activate");
 }

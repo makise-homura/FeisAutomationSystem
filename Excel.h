@@ -54,6 +54,7 @@ class TExcel
     int CentimetersToPoints(int Centimeters);
     void PutCell(int Row, int Column, AnsiString Data);
     void GetRow(AnsiString *Strings, int Row, int Length);
+    void DeleteColumn(int Column);
 
     TExcel(AnsiString FileName, enum FileType Type);
     ~TExcel();

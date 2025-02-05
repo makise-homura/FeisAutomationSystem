@@ -1,6 +1,6 @@
 object StartupForm: TStartupForm
-  Left = 236
-  Top = 157
+  Left = 136
+  Top = 92
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1057#1080#1089#1090#1077#1084#1072' '#1072#1074#1090#1086#1084#1072#1090#1080#1079#1072#1094#1080#1080' '#1092#1077#1096#1072

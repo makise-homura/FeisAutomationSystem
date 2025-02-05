@@ -1034,21 +1034,8 @@ bool IsWIDA(TStrings *SchoolsWIDA, TDancer *D)
   return SchoolsWIDA->IndexOf(D->School) >= 0;
 }
 //---------------------------------------------------------------------------
-bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups, int CostRegW = 0, int CostSoloW = 0, int CostFigureW = 0, int CostPremW = 0, int CostChampW = 0, int CostEuroW = 0, int CostUnlimW = 0, int CostRegNW = 0, int CostSoloNW = 0, int CostFigureNW = 0, int CostPremNW = 0, int CostChampNW = 0, int CostEuroNW = 0, int CostUnlimNW = 0, TStrings *SchoolsWIDA = NULL, bool SortBySchools = false)
+void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFilter, int CostRegW = 0, int CostSoloW = 0, int CostFigureW = 0, int CostPremW = 0, int CostChampW = 0, int CostEuroW = 0, int CostUnlimW = 0, int CostRegNW = 0, int CostSoloNW = 0, int CostFigureNW = 0, int CostPremNW = 0, int CostChampNW = 0, int CostEuroNW = 0, int CostUnlimNW = 0, TStrings *SchoolsWIDA = NULL, bool SortBySchools = false)
 {
-  Warning->Caption = "Подготовка файла...";
-  Warning->Show();
-  Application->ProcessMessages();
-
-  TExcel *OutputExcel;
-  try { OutputExcel = new TExcel(FileName, xlCreate); }
-  catch(...)
-  {
-    Application->MessageBox("Невозможно создать выбранный файл", "Ошибка создания файла", MB_OK);
-    Warning->Hide();
-    return false;
-  }
-
   OutputExcel->SetColWidth(0,  5);
   OutputExcel->SetColWidth(1,  5);
   OutputExcel->SetColWidth(2,  30);
@@ -1107,7 +1094,7 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   for (int i = 0; i < Database->TotalDancers(); ++i)
   {
     TDancer *Dancer = Database->GetDancerByIndex(i);
-    if (Dancer->isGroup) continue;
+    if (Dancer->isGroup || (SchoolFilter != "" && SchoolFilter != Dancer->School)) continue;
     bool       *D = Dancer->Dances;
     AnsiString *G = Dancer->AgeGroup;
     AnsiString School = Dancer->School;
@@ -1275,7 +1262,7 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   for (int i = 0; i < Database->TotalDancers(); ++i)
   {
     TDancer *Dancer = Database->GetDancerByIndex(i);
-    if (!Dancer->isGroup) continue;
+    if (!Dancer->isGroup || (SchoolFilter != "" && SchoolFilter != Dancer->School)) continue;
     for (int j = Group2Hand; j <= GroupCeili; ++j)  // We assume database is consistent
     {
       if (Dancer->Dances[j])
@@ -1312,7 +1299,7 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   }
 
   // Step 5. Add fee list
-  if(WithAgeGroups)
+  if(WithAgeGroups && SchoolFilter == "")
   {
     ++Row;
     OutputExcel->PutCell(Row, 3,  "Название школы");
@@ -1358,6 +1345,35 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
   }
 
   delete SchoolDances;
+}
+//---------------------------------------------------------------------------
+bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups, TStrings *SchoolsWIDA, bool SortBySchools = false, TStringList *SchoolsList = new TStringList(), int CostRegW = 0, int CostSoloW = 0, int CostFigureW = 0, int CostPremW = 0, int CostChampW = 0, int CostEuroW = 0, int CostUnlimW = 0, int CostRegNW = 0, int CostSoloNW = 0, int CostFigureNW = 0, int CostPremNW = 0, int CostChampNW = 0, int CostEuroNW = 0, int CostUnlimNW = 0)
+{
+  Warning->Caption = "Подготовка файла...";
+  Warning->Show();
+  Application->ProcessMessages();
+
+  TExcel *OutputExcel;
+  try { OutputExcel = new TExcel(FileName, xlCreate); }
+  catch(...)
+  {
+    Application->MessageBox("Невозможно создать выбранный файл", "Ошибка создания файла", MB_OK);
+    Warning->Hide();
+    return false;
+  }
+
+  OutputExcel->CreateSheet("Все школы", true);
+  ExportBPIOPage(OutputExcel, WithAgeGroups, "", CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, SortBySchools);
+  if(WithAgeGroups)
+  {
+    for(int i = 0; i < SchoolsList->Count; ++i)
+    {
+      OutputExcel->CreateSheet(StringReplace((*SchoolsList)[i], "(Non-WIDA) ", "! ", TReplaceFlags() << rfReplaceAll), false);
+      ExportBPIOPage(OutputExcel, WithAgeGroups, (*SchoolsList)[i], CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, false);
+      OutputExcel->DeleteColumn(3);
+    }
+  }
+
   delete OutputExcel;
   Warning->Hide();
   return true;
@@ -1405,7 +1421,7 @@ void __fastcall TNumbersForm::ButtonCreateScheduleClick(TObject *Sender)
 void __fastcall TNumbersForm::ButtonCreateBPIOClick(TObject *Sender)
 {
   if (!SaveDialogBPIO->Execute()) return;
-  if (ExportBPIOGeneric(SaveDialogBPIO->FileName, PanelWarning, false))
+  if (ExportBPIOGeneric(SaveDialogBPIO->FileName, PanelWarning, false, ListWIDA->Items, false /* CheckBoxSortSchools->Checked : use this if you want this to react to the check box */))
     Application->MessageBox("Создание списка завершено.", "Экспорт BPIO-списка", MB_OK);
 }
 //---------------------------------------------------------------------------
@@ -1413,7 +1429,15 @@ void __fastcall TNumbersForm::ButtonCreateBPIOClick(TObject *Sender)
 void __fastcall TNumbersForm::ButtonCreateSchoolClick(TObject *Sender)
 {
   if (!SaveDialogSchools->Execute()) return;
-  if (ExportBPIOGeneric(SaveDialogSchools->FileName, PanelWarning, true, SpinCostReg->Value, SpinCostSolo->Value, SpinCostFigure->Value, SpinCostPremier->Value, SpinCostChamp->Value, SpinCostEuro->Value, SpinCostUnlim->Value, SpinCostRegNW->Value, SpinCostSoloNW->Value, SpinCostFigureNW->Value, SpinCostPremierNW->Value, SpinCostChampNW->Value, SpinCostEuroNW->Value, SpinCostUnlimNW->Value, ListWIDA->Items, CheckBoxSortSchools->Checked))
+
+  TStringList* SchoolsList = new TStringList();
+  for (int i = 0; i < Database->TotalDancers(); ++i)
+  {
+    TDancer *Dancer = Database->GetDancerByIndex(i);
+    if (SchoolsList->IndexOf(Dancer->School) < 0) SchoolsList->Add(Dancer->School);
+  }
+  SchoolsList->Sort();
+  if (ExportBPIOGeneric(SaveDialogSchools->FileName, PanelWarning, true, ListWIDA->Items, CheckBoxSortSchools->Checked, SchoolsList, SpinCostReg->Value, SpinCostSolo->Value, SpinCostFigure->Value, SpinCostPremier->Value, SpinCostChamp->Value, SpinCostEuro->Value, SpinCostUnlim->Value, SpinCostRegNW->Value, SpinCostSoloNW->Value, SpinCostFigureNW->Value, SpinCostPremierNW->Value, SpinCostChampNW->Value, SpinCostEuroNW->Value, SpinCostUnlimNW->Value))
     Application->MessageBox("Создание списка завершено.", "Экспорт списка по школам", MB_OK);
 }
 //---------------------------------------------------------------------------
