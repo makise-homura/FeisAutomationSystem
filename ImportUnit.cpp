@@ -234,13 +234,17 @@ int AddUID(TList *UIDs, int nUID)
   return *UID;
 }
 //---------------------------------------------------------------------------
-bool MatchDanceLine(AnsiString What, AnsiString Part1, AnsiString Part2)
+/*bool MatchDanceLine(AnsiString What, AnsiString Part1, AnsiString Part2)
 {
   if(What.SubString(1, Part1.Length()) != Part1) return false;
   if(Part2 == NULL) return true;
   int DelimPos = What.Pos(" / ");
   if(DelimPos == 0) return false;
   return What.SubString(DelimPos + 3, Part2.Length()) == Part2;
+}*/
+bool MatchDanceLine(AnsiString What, AnsiString Part)
+{
+  return What.SubString(1, Part.Length()) == Part;
 }
 //---------------------------------------------------------------------------
 void TImportForm::ImportGroupDance(enum Dances Dance, int MaxParticipants, TDancer *Dancer, AnsiString &Storage)
@@ -673,6 +677,9 @@ bool TImportForm::Import(enum ListType Type)
   {
     case ltList:
     {
+      ImportWarning->Caption = "Производится импорт списка участников...";
+      Application->ProcessMessages();
+
       AnsiString Headers[9];
 
       // Check if this is correct file
@@ -857,8 +864,8 @@ bool TImportForm::Import(enum ListType Type)
 
       // This is for importing from now-actual gofeis.
       AnsiString ImportResults = "";
-      AnsiString Sheets[] = {"Beginner", "Intermediate", "Jump 2-3", "Open", "Primary", "Championship"}; // [TODO]: Modern set and treble reel is yet to be supported, as well as Ceili.
-      for (int ish = 0; ish < 6; ++ish)
+      AnsiString Sheets[] = {"Beginner", "Beginner Premiership", "Primary", "Primary Premiership", "Intermediate", "Intermediate Premiership", "Open", "Open Championship"}; // [TODO]: Modern set and treble reel is yet to be supported, as well as Ceili.
+      for (int ish = 0; ish < 8; ++ish)
       {
         Excel->SelectSheet(Sheets[ish]);
 
@@ -871,13 +878,13 @@ bool TImportForm::Import(enum ListType Type)
         for(;;ExcelRow += 1)
         {
           Data = Excel->GetCell(ExcelRow, 0);
-          if (Data == "Place") continue;
-          else if (Data == "") // Dancer line
+          if (Data == "Number #") continue;
+          else if (Data == "" || Data.Length() < 5) // Dancer line
           {
-            // For now: dancer name = column 3, school = column 6. May change in the future.
-            Data = Excel->GetCell(ExcelRow, 3).Trim();
-            while (Data.Pos("  ")) Data.Delete(Data.Pos("  "), 1);
-            School = Excel->GetCell(ExcelRow, 6).Trim();
+            // For now: dancer name = column 1, school = column 5. May change in the future.
+            Data = Excel->GetCell(ExcelRow, 1).Trim();
+            //while (Data.Pos("  ")) Data.Delete(Data.Pos("  "), 1);
+            School = Excel->GetCell(ExcelRow, 5).Trim();
             if(Data == "" && School == "") // Empty line, end of the dance
             {
               if (++EmptyLines > 3) break; // Fourth consecutive empty line = end of page
@@ -922,11 +929,11 @@ bool TImportForm::Import(enum ListType Type)
           }
           else // Dance type
           {
-            AnsiString SkipTest = "";
+            /*AnsiString SkipTest = "";
             for(int cp = 1; cp <= Data.Length(); ++cp) if (!((AnsiString)"0123456789").Pos(Data[cp])) SkipTest += Data[cp];
-            if(SkipTest == "U" || SkipTest == "O" || SkipTest == "Under " || SkipTest == "Over ") continue;
+            if(SkipTest == "U" || SkipTest == "O" || SkipTest == "Under " || SkipTest == "Over ") continue;*/
 
-                 if (MatchDanceLine(Data, "Jump 2-3", "Jump 2-3"))              CurrentDance = Jump23;
+            /*   if (MatchDanceLine(Data, "Jump 2-3", "Jump 2-3"))              CurrentDance = Jump23;
             else if (MatchDanceLine(Data, "Beginner", "Reel"))                  CurrentDance = BeginnerReel;
             else if (MatchDanceLine(Data, "Beginner", "Light Jig"))             CurrentDance = BeginnerLightJig;
             else if (MatchDanceLine(Data, "Beginner", "Single Jig"))            CurrentDance = BeginnerSingleJig;
@@ -957,7 +964,72 @@ bool TImportForm::Import(enum ListType Type)
             else if (MatchDanceLine(Data, "Open", "Hornpipe"))                  CurrentDance = OpenHornpipe;
             else if (MatchDanceLine(Data, "Open", "Traditional Set: "))         CurrentDance = OpenTradSet;
             else if (MatchDanceLine(Data, "Preliminary Championship", NULL))    CurrentDance = PreChampionship;
-            else if (MatchDanceLine(Data, "Open Championship", NULL))           CurrentDance = Championship;
+            else if (MatchDanceLine(Data, "Open Championship", NULL))           CurrentDance = Championship; */
+
+            // Remove "(...) " things
+            AnsiString Data2 = "";
+            bool Deletion = false;
+            for (int sn = 1; sn <= Data.Length(); ++sn)
+            {
+              if (Deletion)
+              {
+                if (Data[sn] == ')')
+                {
+                  ++sn;
+                  Deletion = false;
+                }
+              }
+              else
+              {
+                if (Data[sn] == '(')
+                {
+                  Deletion = true;
+                }
+                else
+                {
+                  Data2 += Data[sn];
+                }
+              }
+            }
+            Data2 = Data2.Trim();
+
+            ImportWarning->Caption = (AnsiString)"Импорт: " + Data2;
+            Application->ProcessMessages();
+
+                 if (Data2 == "Jump 2-3")                                     CurrentDance = Jump23;
+            else if (Data2 == "Beginner Reel")                                CurrentDance = BeginnerReel;
+            else if (Data2 == "Beginner Light Jig")                           CurrentDance = BeginnerLightJig;
+            else if (Data2 == "Beginner Single Jig")                          CurrentDance = BeginnerSingleJig;
+            else if (Data2 == "Beginner Slip Jig")                            CurrentDance = BeginnerSlipJig;
+            else if (Data2 == "Beginner Treble Jig")                          CurrentDance = BeginnerTrebleJig;
+            else if (Data2 == "Beginner Treble Reel")                         CurrentDance = TrebleReel;
+            else if (Data2 == "Beginner Hornpipe")                            CurrentDance = BeginnerHornpipe;
+            else if (MatchDanceLine(Data2, "Beginner Traditional Set: "))     CurrentDance = BeginnerTradSet;
+            else if (Data2 == "Beginner Premiership")                         CurrentDance = BeginnerPremiership;
+            else if (Data2 == "Primary Reel")                                 CurrentDance = PrimaryReel;
+            else if (Data2 == "Primary Light Jig")                            CurrentDance = PrimaryLightJig;
+            else if (Data2 == "Primary Single Jig")                           CurrentDance = PrimarySingleJig;
+            else if (Data2 == "Primary Slip Jig")                             CurrentDance = PrimarySlipJig;
+            else if (Data2 == "Primary Treble Jig")                           CurrentDance = PrimaryTrebleJig;
+            else if (Data2 == "Primary Hornpipe")                             CurrentDance = PrimaryHornpipe;
+            else if (MatchDanceLine(Data2, "Primary Traditional Set: "))      CurrentDance = PrimaryTradSet;
+            else if (Data2 == "Primary Premiership")                          CurrentDance = PrimaryPremiership;
+            else if (Data2 == "Intermediate Reel")                            CurrentDance = IntermedReel;
+            else if (Data2 == "Intermediate Light Jig")                       CurrentDance = IntermedLightJig;
+            else if (Data2 == "Intermediate Single Jig")                      CurrentDance = IntermedSingleJig;
+            else if (Data2 == "Intermediate Slip Jig")                        CurrentDance = IntermedSlipJig;
+            else if (Data2 == "Intermediate Treble Jig")                      CurrentDance = IntermedTrebleJig;
+            else if (Data2 == "Intermediate Hornpipe")                        CurrentDance = IntermedHornpipe;
+            else if (MatchDanceLine(Data2, "Intermediate Traditional Set: ")) CurrentDance = IntermedTradSet;
+            else if (Data2 == "Intermediate Premiership")                     CurrentDance = IntermedPremiership;
+            else if (Data2 == "Open Reel")                                    CurrentDance = OpenReel;
+            else if (Data2 == "Open Slip Jig")                                CurrentDance = OpenSlipJig;
+            else if (Data2 == "Open Treble Jig")                              CurrentDance = OpenTrebleJig;
+            else if (Data2 == "Open Treble Reel")                             CurrentDance = TrebleReel;
+            else if (Data2 == "Open Hornpipe")                                CurrentDance = OpenHornpipe;
+            else if (MatchDanceLine(Data2, "Open Traditional Set: "))         CurrentDance = OpenTradSet;
+            else if (Data2 == "Preliminary Championship")                     CurrentDance = PreChampionship;
+            else if (Data2 == "Open Championship")                            CurrentDance = Championship;
             else
             {
               AnsiString errmsg = Sheets[ish] + ", строка " + (AnsiString)(ExcelRow + 1) + ": неизвестный танец " + Data + ".\nДанный танец добавлен не будет.";
