@@ -1038,7 +1038,7 @@ bool IsWIDA(TStrings *SchoolsWIDA, TDancer *D)
   return SchoolsWIDA->IndexOf(D->School) >= 0;
 }
 //---------------------------------------------------------------------------
-void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFilter, int CostRegW = 0, int CostSoloW = 0, int CostFigureW = 0, int CostPremW = 0, int CostChampW = 0, int CostEuroW = 0, int CostUnlimW = 0, int CostRegNW = 0, int CostSoloNW = 0, int CostFigureNW = 0, int CostPremNW = 0, int CostChampNW = 0, int CostEuroNW = 0, int CostUnlimNW = 0, TStrings *SchoolsWIDA = NULL, bool SortBySchools = false)
+void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFilter, int CostRegW = 0, int CostSoloW = 0, int CostFigureW = 0, int CostPremW = 0, int CostChampW = 0, int CostEuroW = 0, int CostUnlimW = 0, int CostRegNW = 0, int CostSoloNW = 0, int CostFigureNW = 0, int CostPremNW = 0, int CostChampNW = 0, int CostEuroNW = 0, int CostUnlimNW = 0, TStrings *SchoolsWIDA = NULL, bool SortBySchools = false, bool isChampionshipDay = false)
 {
   OutputExcel->SetColWidth(0,  5);
   OutputExcel->SetColWidth(1,  5);
@@ -1059,14 +1059,38 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
   OutputExcel->SetColWidth(16, 6);
   if (WithAgeGroups)
   {
-    OutputExcel->SetColWidth(17, 6);
-    OutputExcel->PutCell(0, 17, "Евро");
-    OutputExcel->SetColWidth(18, 6);
-    OutputExcel->PutCell(0, 18, "Рубли");
-    OutputExcel->SetColWidth(19, 10);
-    OutputExcel->PutCell(0, 19, "Безлимит");
-    OutputExcel->SetColWidth(20, 6);
-    OutputExcel->PutCell(0, 20, "Танцы");
+    if(isChampionshipDay)
+    {
+      OutputExcel->SetColWidth(17, 10);
+      OutputExcel->PutCell(0, 17, "Евро феш");
+      OutputExcel->SetColWidth(18, 11);
+      OutputExcel->PutCell(0, 18, "Рубли феш");
+      OutputExcel->SetColWidth(19, 15);
+      OutputExcel->PutCell(0, 19, "Безлимит феш");
+      OutputExcel->SetColWidth(20, 10);
+      OutputExcel->PutCell(0, 20, "Евро чемп");
+      OutputExcel->SetColWidth(21, 11);
+      OutputExcel->PutCell(0, 21, "Рубли чемп");
+      OutputExcel->SetColWidth(22, 15);
+      OutputExcel->PutCell(0, 22, "Безлимит чемп");
+      OutputExcel->SetColWidth(23, 12);
+      OutputExcel->PutCell(0, 23, "Сумма евро");
+      OutputExcel->SetColWidth(24, 13);
+      OutputExcel->PutCell(0, 24, "Сумма рубли");
+      OutputExcel->SetColWidth(25, 6);
+      OutputExcel->PutCell(0, 25, "Танцы");
+    }
+    else
+    {
+      OutputExcel->SetColWidth(17, 6);
+      OutputExcel->PutCell(0, 17, "Евро");
+      OutputExcel->SetColWidth(18, 6);
+      OutputExcel->PutCell(0, 18, "Рубли");
+      OutputExcel->SetColWidth(19, 10);
+      OutputExcel->PutCell(0, 19, "Безлимит");
+      OutputExcel->SetColWidth(20, 6);
+      OutputExcel->PutCell(0, 20, "Танцы");
+    }
   }
 
   int Row = 0;
@@ -1088,7 +1112,7 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
                                     "Treble", "Horn", "Trad", "Prem", "PreCh", "Champ");
       if (WithAgeGroups)
       {
-        OutputExcel->SelectRange(0, 0, 21, 1);
+        OutputExcel->SelectRange(0, 0, isChampionshipDay ? 26 : 21, 1);
       }
       else
       {
@@ -1136,75 +1160,180 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
       int CostEuro   = IsWIDA(SchoolsWIDA, Dancer) ? CostEuroW   : CostEuroNW;
       int CostUnlim  = IsWIDA(SchoolsWIDA, Dancer) ? CostUnlimW  : CostUnlimNW;
 
-      int dances = CostReg, regs = 0;
-      if(D[Jump23])              {dances += CostSolo;  ++regs; }
-      if(D[ModernSet])           {dances += CostSolo;  ++regs; }
-      if(D[TrebleReel])          {dances += CostSolo;  ++regs; }
-      if(D[BeginnerReel])        {dances += CostSolo;  ++regs; }
-      if(D[PrimaryReel])         {dances += CostSolo;  ++regs; }
-      if(D[IntermedReel])        {dances += CostSolo;  ++regs; }
-      if(D[OpenReel])            {dances += CostSolo;  ++regs; }
-      if(D[BeginnerLightJig])    {dances += CostSolo;  ++regs; }
-      if(D[PrimaryLightJig])     {dances += CostSolo;  ++regs; }
-      if(D[IntermedLightJig])    {dances += CostSolo;  ++regs; }
-      if(D[BeginnerSingleJig])   {dances += CostSolo;  ++regs; }
-      if(D[PrimarySingleJig])    {dances += CostSolo;  ++regs; }
-      if(D[IntermedSingleJig])   {dances += CostSolo;  ++regs; }
-      if(D[BeginnerSlipJig])     {dances += CostSolo;  ++regs; }
-      if(D[PrimarySlipJig])      {dances += CostSolo;  ++regs; }
-      if(D[IntermedSlipJig])     {dances += CostSolo;  ++regs; }
-      if(D[OpenSlipJig])         {dances += CostSolo;  ++regs; }
-      if(D[BeginnerTrebleJig])   {dances += CostSolo;  ++regs; }
-      if(D[PrimaryTrebleJig])    {dances += CostSolo;  ++regs; }
-      if(D[IntermedTrebleJig])   {dances += CostSolo;  ++regs; }
-      if(D[OpenTrebleJig])       {dances += CostSolo;  ++regs; }
-      if(D[BeginnerHornpipe])    {dances += CostSolo;  ++regs; }
-      if(D[PrimaryHornpipe])     {dances += CostSolo;  ++regs; }
-      if(D[IntermedHornpipe])    {dances += CostSolo;  ++regs; }
-      if(D[OpenHornpipe])        {dances += CostSolo;  ++regs; }
-      if(D[BeginnerTradSet])     {dances += CostSolo;  ++regs; }
-      if(D[PrimaryTradSet])      {dances += CostSolo;  ++regs; }
-      if(D[IntermedTradSet])     {dances += CostSolo;  ++regs; }
-      if(D[OpenTradSet])         {dances += CostSolo;  ++regs; }
-      if(D[BeginnerPremiership]) {dances += CostPrem;  ++regs; }
-      if(D[PrimaryPremiership])  {dances += CostPrem;  ++regs; }
-      if(D[IntermedPremiership]) {dances += CostPrem;  ++regs; }
-      if(D[PreChampionship])     {dances += CostChamp; ++regs; }
-      if(D[Championship])        {dances += CostChamp; ++regs; }
-      // Each group dance should count as additional one
-      for (int j = 0; j < Database->TotalDancers(); ++j)
+      int dances = 0, dances2 = 0, regs = 0;
+      if (isChampionshipDay)
       {
-        TDancer *DGroup = Database->GetDancerByIndex(j);
-        if (!DGroup->isGroup || DGroup->School != Dancer->School) continue;
+        if(D[Jump23])              {dances  += CostSolo;  ++regs; }
+        if(D[ModernSet])           {dances  += CostSolo;  ++regs; }
+        if(D[TrebleReel])          {dances  += CostSolo;  ++regs; }
+        if(D[BeginnerReel])        {dances  += CostSolo;  ++regs; }
+        if(D[PrimaryReel])         {dances  += CostSolo;  ++regs; }
+        if(D[IntermedReel])        {dances  += CostSolo;  ++regs; }
+        if(D[OpenReel])            {dances2 += CostSolo;  ++regs; }
+        if(D[BeginnerLightJig])    {dances  += CostSolo;  ++regs; }
+        if(D[PrimaryLightJig])     {dances  += CostSolo;  ++regs; }
+        if(D[IntermedLightJig])    {dances  += CostSolo;  ++regs; }
+        if(D[BeginnerSingleJig])   {dances  += CostSolo;  ++regs; }
+        if(D[PrimarySingleJig])    {dances  += CostSolo;  ++regs; }
+        if(D[IntermedSingleJig])   {dances  += CostSolo;  ++regs; }
+        if(D[BeginnerSlipJig])     {dances  += CostSolo;  ++regs; }
+        if(D[PrimarySlipJig])      {dances  += CostSolo;  ++regs; }
+        if(D[IntermedSlipJig])     {dances  += CostSolo;  ++regs; }
+        if(D[OpenSlipJig])         {dances2 += CostSolo;  ++regs; }
+        if(D[BeginnerTrebleJig])   {dances  += CostSolo;  ++regs; }
+        if(D[PrimaryTrebleJig])    {dances  += CostSolo;  ++regs; }
+        if(D[IntermedTrebleJig])   {dances  += CostSolo;  ++regs; }
+        if(D[OpenTrebleJig])       {dances2 += CostSolo;  ++regs; }
+        if(D[BeginnerHornpipe])    {dances  += CostSolo;  ++regs; }
+        if(D[PrimaryHornpipe])     {dances  += CostSolo;  ++regs; }
+        if(D[IntermedHornpipe])    {dances  += CostSolo;  ++regs; }
+        if(D[OpenHornpipe])        {dances2 += CostSolo;  ++regs; }
+        if(D[BeginnerTradSet])     {dances  += CostSolo;  ++regs; }
+        if(D[PrimaryTradSet])      {dances  += CostSolo;  ++regs; }
+        if(D[IntermedTradSet])     {dances  += CostSolo;  ++regs; }
+        if(D[OpenTradSet])         {dances2 += CostSolo;  ++regs; }
+        if(D[BeginnerPremiership]) {dances  += CostPrem;  ++regs; }
+        if(D[PrimaryPremiership])  {dances  += CostPrem;  ++regs; }
+        if(D[IntermedPremiership]) {dances  += CostPrem;  ++regs; }
+        if(D[PreChampionship])     {dances  += CostChamp; ++regs; }
+        if(D[Championship])        {dances2 += CostChamp; ++regs; }
 
-        for(int k = 0; k < TeamStringLength(DGroup->Name); ++k)
+        // Whether any of the days will be suitable for Unlim, cost reg is added to this day; else it is added to day1 if there are any dances, or to day2 otherwise.
+        if (dances + CostReg >= CostUnlim) dances += CostReg;
+        else if (dances2 + CostReg >= CostUnlim) dances2 += CostReg;
+        else if (dances) dances += CostReg;
+        else dances2 += CostReg;
+
+        // Each group dance should count as additional one
+        for (int j = 0; j < Database->TotalDancers(); ++j)
         {
-          AnsiString DancerName = TeamStringGet(DGroup->Name, k);
-          if (Dancer->Name == DancerName) { dances += CostFigure; ++regs; }
-        }
-      }
+          TDancer *DGroup = Database->GetDancerByIndex(j);
+          if (!DGroup->isGroup || DGroup->School != Dancer->School) continue;
 
-      if (CostUnlim > 0 && dances >= CostUnlim)
-      {
-        dances = CostUnlim;
+          for(int k = 0; k < TeamStringLength(DGroup->Name); ++k)
+          {
+            AnsiString DancerName = TeamStringGet(DGroup->Name, k);
+            if (Dancer->Name == DancerName) { dances += CostFigure; ++regs; } // [TODO]: figures championship should go to dances2, not dances!!!
+          }
+        }
+
+        if (CostUnlim > 0 && dances >= CostUnlim)
+        {
+          dances = CostUnlim;
+          OutputExcel->SelectCell(Row, 17);
+          OutputExcel->SetFontBold();
+          OutputExcel->SelectCell(Row, 18);
+          OutputExcel->SetFontBold();
+          OutputExcel->SelectCell(Row, 19);
+          OutputExcel->SetFontBold();
+        }
         OutputExcel->SelectCell(Row, 17);
-        OutputExcel->SetFontBold();
+        OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
         OutputExcel->SelectCell(Row, 18);
-        OutputExcel->SetFontBold();
+        OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
         OutputExcel->SelectCell(Row, 19);
-        OutputExcel->SetFontBold();
+        OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
+        OutputExcel->PutCell(Row, 17, (AnsiString)dances);
+        OutputExcel->PutCell(Row, 18, (AnsiString)(dances * CostEuro));
+        OutputExcel->PutCell(Row, 19, (dances == CostUnlim ? "Безлимит" : ""));
+
+        if (CostUnlim > 0 && dances2 >= CostUnlim)
+        {
+          dances2 = CostUnlim;
+          OutputExcel->SelectCell(Row, 20);
+          OutputExcel->SetFontBold();
+          OutputExcel->SelectCell(Row, 21);
+          OutputExcel->SetFontBold();
+          OutputExcel->SelectCell(Row, 22);
+          OutputExcel->SetFontBold();
+        }
+        OutputExcel->SelectCell(Row, 20);
+        OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
+        OutputExcel->SelectCell(Row, 21);
+        OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
+        OutputExcel->SelectCell(Row, 22);
+        OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
+        OutputExcel->PutCell(Row, 20, (AnsiString)dances2);
+        OutputExcel->PutCell(Row, 21, (AnsiString)(dances2 * CostEuro));
+        OutputExcel->PutCell(Row, 22, (dances2 == CostUnlim ? "Безлимит" : ""));
+
+        OutputExcel->PutCell(Row, 23, (AnsiString)(dances + dances2));
+        OutputExcel->PutCell(Row, 24, (AnsiString)((dances + dances2) * CostEuro));
+        OutputExcel->PutCell(Row, 25, (AnsiString)regs);
+        SchoolDances->Add(Dancer->School, dances + dances2);
       }
-      OutputExcel->SelectCell(Row, 17);
-      OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
-      OutputExcel->SelectCell(Row, 18);
-      OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
-      OutputExcel->SelectCell(Row, 19);
-      OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
-      OutputExcel->PutCell(Row, 17, (AnsiString)dances);
-      OutputExcel->PutCell(Row, 18, (AnsiString)(dances * CostEuro));
-      OutputExcel->PutCell(Row, 19, (dances == CostUnlim ? "Безлимит" : ""));
-      OutputExcel->PutCell(Row, 20, (AnsiString)regs);
-      SchoolDances->Add(Dancer->School, dances);
+      else
+      {
+        dances = CostReg;
+        if(D[Jump23])              {dances += CostSolo;  ++regs; }
+        if(D[ModernSet])           {dances += CostSolo;  ++regs; }
+        if(D[TrebleReel])          {dances += CostSolo;  ++regs; }
+        if(D[BeginnerReel])        {dances += CostSolo;  ++regs; }
+        if(D[PrimaryReel])         {dances += CostSolo;  ++regs; }
+        if(D[IntermedReel])        {dances += CostSolo;  ++regs; }
+        if(D[OpenReel])            {dances += CostSolo;  ++regs; }
+        if(D[BeginnerLightJig])    {dances += CostSolo;  ++regs; }
+        if(D[PrimaryLightJig])     {dances += CostSolo;  ++regs; }
+        if(D[IntermedLightJig])    {dances += CostSolo;  ++regs; }
+        if(D[BeginnerSingleJig])   {dances += CostSolo;  ++regs; }
+        if(D[PrimarySingleJig])    {dances += CostSolo;  ++regs; }
+        if(D[IntermedSingleJig])   {dances += CostSolo;  ++regs; }
+        if(D[BeginnerSlipJig])     {dances += CostSolo;  ++regs; }
+        if(D[PrimarySlipJig])      {dances += CostSolo;  ++regs; }
+        if(D[IntermedSlipJig])     {dances += CostSolo;  ++regs; }
+        if(D[OpenSlipJig])         {dances += CostSolo;  ++regs; }
+        if(D[BeginnerTrebleJig])   {dances += CostSolo;  ++regs; }
+        if(D[PrimaryTrebleJig])    {dances += CostSolo;  ++regs; }
+        if(D[IntermedTrebleJig])   {dances += CostSolo;  ++regs; }
+        if(D[OpenTrebleJig])       {dances += CostSolo;  ++regs; }
+        if(D[BeginnerHornpipe])    {dances += CostSolo;  ++regs; }
+        if(D[PrimaryHornpipe])     {dances += CostSolo;  ++regs; }
+        if(D[IntermedHornpipe])    {dances += CostSolo;  ++regs; }
+        if(D[OpenHornpipe])        {dances += CostSolo;  ++regs; }
+        if(D[BeginnerTradSet])     {dances += CostSolo;  ++regs; }
+        if(D[PrimaryTradSet])      {dances += CostSolo;  ++regs; }
+        if(D[IntermedTradSet])     {dances += CostSolo;  ++regs; }
+        if(D[OpenTradSet])         {dances += CostSolo;  ++regs; }
+        if(D[BeginnerPremiership]) {dances += CostPrem;  ++regs; }
+        if(D[PrimaryPremiership])  {dances += CostPrem;  ++regs; }
+        if(D[IntermedPremiership]) {dances += CostPrem;  ++regs; }
+        if(D[PreChampionship])     {dances += CostChamp; ++regs; }
+        if(D[Championship])        {dances += CostChamp; ++regs; }
+        // Each group dance should count as additional one
+        for (int j = 0; j < Database->TotalDancers(); ++j)
+        {
+          TDancer *DGroup = Database->GetDancerByIndex(j);
+          if (!DGroup->isGroup || DGroup->School != Dancer->School) continue;
+
+          for(int k = 0; k < TeamStringLength(DGroup->Name); ++k)
+          {
+            AnsiString DancerName = TeamStringGet(DGroup->Name, k);
+            if (Dancer->Name == DancerName) { dances += CostFigure; ++regs; }
+          }
+        }
+
+        if (CostUnlim > 0 && dances >= CostUnlim)
+        {
+          dances = CostUnlim;
+          OutputExcel->SelectCell(Row, 17);
+          OutputExcel->SetFontBold();
+          OutputExcel->SelectCell(Row, 18);
+          OutputExcel->SetFontBold();
+          OutputExcel->SelectCell(Row, 19);
+          OutputExcel->SetFontBold();
+        }
+        OutputExcel->SelectCell(Row, 17);
+        OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
+        OutputExcel->SelectCell(Row, 18);
+        OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
+        OutputExcel->SelectCell(Row, 19);
+        OutputExcel->SetFontColor(IsWIDA(SchoolsWIDA, Dancer) ? clBlack : clRed);
+        OutputExcel->PutCell(Row, 17, (AnsiString)dances);
+        OutputExcel->PutCell(Row, 18, (AnsiString)(dances * CostEuro));
+        OutputExcel->PutCell(Row, 19, (dances == CostUnlim ? "Безлимит" : ""));
+        OutputExcel->PutCell(Row, 20, (AnsiString)regs);
+        SchoolDances->Add(Dancer->School, dances);
+      }
       Row++;
     }
     else
@@ -1232,8 +1361,16 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
   {
     if (WithAgeGroups)
     {
-      if (SortBySchools) OutputExcel->Sort(0, 1, 21, Row - 1, 3, xlAscending);
-      OutputExcel->SelectRange(0, 1, 21, Row - 1);
+      if (isChampionshipDay)
+      {
+        if (SortBySchools) OutputExcel->Sort(0, 1, 26, Row - 1, 3, xlAscending);
+        OutputExcel->SelectRange(0, 1, 26, Row - 1);
+      }
+      else
+      {
+        if (SortBySchools) OutputExcel->Sort(0, 1, 21, Row - 1, 3, xlAscending);
+        OutputExcel->SelectRange(0, 1, 21, Row - 1);
+      }
     }
     else
     {
@@ -1361,7 +1498,7 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
   delete SchoolDances;
 }
 //---------------------------------------------------------------------------
-bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups, TStrings *SchoolsWIDA, bool SortBySchools = false, TStringList *SchoolsList = new TStringList(), int CostRegW = 0, int CostSoloW = 0, int CostFigureW = 0, int CostPremW = 0, int CostChampW = 0, int CostEuroW = 0, int CostUnlimW = 0, int CostRegNW = 0, int CostSoloNW = 0, int CostFigureNW = 0, int CostPremNW = 0, int CostChampNW = 0, int CostEuroNW = 0, int CostUnlimNW = 0)
+bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups, TStrings *SchoolsWIDA, bool SortBySchools = false, TStringList *SchoolsList = new TStringList(), int CostRegW = 0, int CostSoloW = 0, int CostFigureW = 0, int CostPremW = 0, int CostChampW = 0, int CostEuroW = 0, int CostUnlimW = 0, int CostRegNW = 0, int CostSoloNW = 0, int CostFigureNW = 0, int CostPremNW = 0, int CostChampNW = 0, int CostEuroNW = 0, int CostUnlimNW = 0, bool isChampionshipDay = false)
 {
   Warning->Caption = "Подготовка файла...";
   Warning->Show();
@@ -1384,13 +1521,13 @@ bool ExportBPIOGeneric(AnsiString FileName, TPanel *Warning, bool WithAgeGroups,
       Warning->Caption = "Запись школы " + (*SchoolsList)[i] + "...";
       OutputExcel->CreateSheet(StringReplace((*SchoolsList)[i], "(Non-WIDA) ", "! ", TReplaceFlags() << rfReplaceAll), ClearXLS);
       ClearXLS = false;
-      ExportBPIOPage(OutputExcel, WithAgeGroups, (*SchoolsList)[i], CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, false);
+      ExportBPIOPage(OutputExcel, WithAgeGroups, (*SchoolsList)[i], CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, false, isChampionshipDay);
       OutputExcel->DeleteColumn(3);
     }
   }
   Warning->Caption = "Запись общей страницы...";
   OutputExcel->CreateSheet("Все школы", ClearXLS);
-  ExportBPIOPage(OutputExcel, WithAgeGroups, "", CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, SortBySchools);
+  ExportBPIOPage(OutputExcel, WithAgeGroups, "", CostRegW, CostSoloW, CostFigureW, CostPremW, CostChampW, CostEuroW, CostUnlimW, CostRegNW, CostSoloNW, CostFigureNW, CostPremNW, CostChampNW, CostEuroNW, CostUnlimNW, SchoolsWIDA, SortBySchools, isChampionshipDay);
 
   OutputExcel->SelectSheet("Все школы");
   delete OutputExcel;
@@ -1458,6 +1595,9 @@ int __fastcall SchoolSortWrapper(TStringList* List, int Index1, int Index2)
 #pragma argsused
 void __fastcall TNumbersForm::ButtonCreateSchoolClick(TObject *Sender)
 {
+
+  bool isChampionshipDay = true; /* NOTE: set this to false for every generic feis! */
+
   if (!SaveDialogSchools->Execute()) return;
 
   TStringList* SchoolsList = new TStringList();
@@ -1467,7 +1607,7 @@ void __fastcall TNumbersForm::ButtonCreateSchoolClick(TObject *Sender)
     if (SchoolsList->IndexOf(Dancer->School) < 0) SchoolsList->Add(Dancer->School);
   }
   SchoolsList->CustomSort(SchoolSortWrapper);
-  if (ExportBPIOGeneric(SaveDialogSchools->FileName, PanelWarning, true, ListWIDA->Items, CheckBoxSortSchools->Checked, SchoolsList, SpinCostReg->Value, SpinCostSolo->Value, SpinCostFigure->Value, SpinCostPremier->Value, SpinCostChamp->Value, SpinCostEuro->Value, SpinCostUnlim->Value, SpinCostRegNW->Value, SpinCostSoloNW->Value, SpinCostFigureNW->Value, SpinCostPremierNW->Value, SpinCostChampNW->Value, SpinCostEuroNW->Value, SpinCostUnlimNW->Value))
+  if (ExportBPIOGeneric(SaveDialogSchools->FileName, PanelWarning, true, ListWIDA->Items, CheckBoxSortSchools->Checked, SchoolsList, SpinCostReg->Value, SpinCostSolo->Value, SpinCostFigure->Value, SpinCostPremier->Value, SpinCostChamp->Value, SpinCostEuro->Value, SpinCostUnlim->Value, SpinCostRegNW->Value, SpinCostSoloNW->Value, SpinCostFigureNW->Value, SpinCostPremierNW->Value, SpinCostChampNW->Value, SpinCostEuroNW->Value, SpinCostUnlimNW->Value, isChampionshipDay))
     Application->MessageBox("Создание списка завершено.", "Экспорт списка по школам", MB_OK);
 }
 //---------------------------------------------------------------------------
