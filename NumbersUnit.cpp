@@ -578,6 +578,7 @@ int OutputStageTable(int Row, TPanel *Warning, TExcel *Excel, enum Dances Dance,
       TDancer *Dancer = Database->GetDancerByIndex(i);
       if (!Dancer->Dances[Dance]) continue;
       if (Dancer->AgeGroup[Dance] != Groups[Dance][Group]) continue;
+      if (isGroupDance(Dance) && !Dancer->isGroup) continue;
 
       AnsiString Number = Dancer->Number;
       ++Dancers;
