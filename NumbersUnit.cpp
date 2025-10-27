@@ -886,7 +886,7 @@ bool ExportNumbers(AnsiString FileName, TPanel *Warning, int AdditionalSolo, int
   int CurrentPos = 0;
   if(!OutputExcel->SetPageSetup(xlPaperA6, xlLandscape, 0, 1, 0, 1))
   {
-    Application->MessageBox("Невозможно установить размер страницы A6.\nПроверьте, что используете Excel 2007 или более новый.", "Ошибка создания файла", MB_OK);
+    Application->MessageBox("Невозможно установить размер страницы A6.\nУстановите по умолчанию принтер, который поддерживает такой размер,\nнапример, Microsoft XPS Document Writer.", "Ошибка создания файла", MB_OK);
     delete OutputExcel;
     Warning->Hide();
     return false;
