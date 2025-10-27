@@ -49,7 +49,7 @@ class TExcel
     void SetColWidth(int Column, int Width);
     void SetRowHeight(int Column, int Height);
     void Sort(int Column, int Row, int Width, int Height, int ColNum, enum SortOrders Order);
-    void SetPageSetup(enum PaperSizes PaperSize, enum OrientationTypes Orientation, int MarginLeft, int MarginTop, int MarginRight, int MarginBottom);
+    bool SetPageSetup(enum PaperSizes PaperSize, enum OrientationTypes Orientation, int MarginLeft, int MarginTop, int MarginRight, int MarginBottom);
     AnsiString GetValue();
     int CentimetersToPoints(int Centimeters);
     void PutCell(int Row, int Column, AnsiString Data);

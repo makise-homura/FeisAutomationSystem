@@ -242,14 +242,22 @@ int TExcel::CentimetersToPoints(int Centimeters)
   return var_Excel.OlePropertyGet("Application").OleFunction("CentimetersToPoints", Centimeters);
 }
 //---------------------------------------------------------------------------
-void TExcel::SetPageSetup(enum PaperSizes PaperSize, enum OrientationTypes Orientation, int MarginLeft, int MarginTop, int MarginRight, int MarginBottom)
+bool TExcel::SetPageSetup(enum PaperSizes PaperSize, enum OrientationTypes Orientation, int MarginLeft, int MarginTop, int MarginRight, int MarginBottom)
 {
-  var_Sheet.OlePropertyGet("PageSetup").OlePropertySet("PaperSize",    PaperSize);
+  try
+  {
+    var_Sheet.OlePropertyGet("PageSetup").OlePropertySet("PaperSize", PaperSize);
+  }
+  catch (...)
+  {
+    return false;
+  }
   var_Sheet.OlePropertyGet("PageSetup").OlePropertySet("Orientation",  Orientation);
   var_Sheet.OlePropertyGet("PageSetup").OlePropertySet("LeftMargin",   CentimetersToPoints(MarginLeft));
   var_Sheet.OlePropertyGet("PageSetup").OlePropertySet("TopMargin",    CentimetersToPoints(MarginTop));
   var_Sheet.OlePropertyGet("PageSetup").OlePropertySet("RightMargin",  CentimetersToPoints(MarginRight));
   var_Sheet.OlePropertyGet("PageSetup").OlePropertySet("BottomMargin", CentimetersToPoints(MarginBottom));
+  return true;
 }
 //---------------------------------------------------------------------------
 

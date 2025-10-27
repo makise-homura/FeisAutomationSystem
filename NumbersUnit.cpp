@@ -872,7 +872,14 @@ bool ExportNumbers(AnsiString FileName, TPanel *Warning, int AdditionalSolo, int
 
   int Total = Database->TotalDancers() + AdditionalSolo + AdditionalTeam;
   int CurrentPos = 0;
-  OutputExcel->SetPageSetup(xlPaperA6, xlLandscape, 0, 1, 0, 1);
+  if(!OutputExcel->SetPageSetup(xlPaperA6, xlLandscape, 0, 1, 0, 1))
+  {
+    Application->MessageBox("Невозможно установить размер страницы A6.\nПроверьте, что используете Excel 2007 или более новый.", "Ошибка создания файла", MB_OK);
+    delete OutputExcel;
+    Warning->Hide();
+    return false;
+  }
+
   OutputExcel->SetColWidth(0, 3);
   OutputExcel->SetColWidth(1, 9);
   OutputExcel->SetColWidth(2, 9);
