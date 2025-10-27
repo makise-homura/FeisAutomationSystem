@@ -273,7 +273,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 0
-        Value = 5
+        Value = 7
       end
       object SpinCostSolo: TCSpinEdit
         Left = 160
@@ -281,7 +281,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 1
-        Value = 5
+        Value = 7
       end
       object SpinCostFigure: TCSpinEdit
         Left = 232
@@ -289,7 +289,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 2
-        Value = 5
+        Value = 7
       end
       object SpinCostEuro: TCSpinEdit
         Left = 448
@@ -297,7 +297,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 5
-        Value = 100
+        Value = 110
       end
       object SpinCostChamp: TCSpinEdit
         Left = 376
@@ -305,7 +305,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 4
-        Value = 20
+        Value = 50
       end
       object SpinCostPremier: TCSpinEdit
         Left = 304
@@ -313,7 +313,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 3
-        Value = 15
+        Value = 25
       end
       object SpinCostRegNW: TCSpinEdit
         Left = 88
@@ -321,7 +321,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 7
-        Value = 6
+        Value = 8
       end
       object SpinCostSoloNW: TCSpinEdit
         Left = 160
@@ -329,7 +329,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 8
-        Value = 6
+        Value = 8
       end
       object SpinCostFigureNW: TCSpinEdit
         Left = 232
@@ -337,7 +337,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 9
-        Value = 6
+        Value = 8
       end
       object SpinCostPremierNW: TCSpinEdit
         Left = 304
@@ -345,7 +345,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 10
-        Value = 17
+        Value = 30
       end
       object SpinCostChampNW: TCSpinEdit
         Left = 376
@@ -353,7 +353,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 11
-        Value = 23
+        Value = 55
       end
       object SpinCostEuroNW: TCSpinEdit
         Left = 448
@@ -361,7 +361,7 @@ object NumbersForm: TNumbersForm
         Width = 57
         Height = 22
         TabOrder = 12
-        Value = 100
+        Value = 110
       end
       object SpinCostUnlim: TCSpinEdit
         Left = 520
@@ -372,7 +372,7 @@ object NumbersForm: TNumbersForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 6
-        Value = 45
+        Value = 60
       end
       object SpinCostUnlimNW: TCSpinEdit
         Left = 520
@@ -383,7 +383,7 @@ object NumbersForm: TNumbersForm
         ParentShowHint = False
         ShowHint = True
         TabOrder = 13
-        Value = 50
+        Value = 70
       end
       object ListWIDA: TListBox
         Left = 8
