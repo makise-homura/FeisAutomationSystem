@@ -1596,4 +1596,30 @@ void __fastcall TFeisEnterForm::AddNameEditKeyPress(TObject *Sender, char &Key)
     }
   }
 }
+//---------------------------------------------------------------------------
+#pragma argsused
+void __fastcall TFeisEnterForm::CleanButtonClick(TObject *Sender)
+{
+  SaveResults();
+  AnsiString Message = "Точно очистить результаты группы " + ReferenceAgeButtons[SelectedGroup]->Caption + " в танце " + ReferenceButtons[SelectedDance]->Caption + "?";
+  int q = Application->MessageBox(Message.c_str(),"Очистка результатов",MB_YESNO);
+  if (q != IDYES) return;
 
+  for(int Dancer = 0; Dancer < Database->TotalDancers(); ++Dancer)
+  {
+    TDancer *D = Database->GetDancerByIndex(Dancer);
+    if (D->Dances[SelectedDance] && (D->AgeGroup[SelectedDance] == ReferenceAgeButtons[SelectedGroup]->Caption))
+    {
+      for (int k = 0; k < TotalRounds; ++k) D->RawPoints[SelectedDance][k] = -1;
+      D->CalcPoints[SelectedDance] = -1;
+      D->Places[SelectedDance] = 0;
+      D->Qualified[SelectedDance] = false;
+    }
+  }
+
+  ForceRedraw = true;
+  ReselectGroup  = false;
+  Renew();
+  ReselectGroup  = true;
+  return;
+}

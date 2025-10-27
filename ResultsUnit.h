@@ -90,6 +90,7 @@ __published:	// IDE-managed Components
   TLabel *Label2;
   TButton *ButtonCeiliChamp;
   TButton *Button4HandChamp;
+  TButton *ButtonClean;
   void __fastcall ButtonJump23Click(TObject *Sender);
   void __fastcall ButtonTrebReelClick(TObject *Sender);
   void __fastcall Button2HandClick(TObject *Sender);
@@ -148,6 +149,7 @@ __published:	// IDE-managed Components
   void __fastcall SaveButtonClick(TObject *Sender);
   void __fastcall CloseButtonClick(TObject *Sender);
   void __fastcall DeleteButtonClick(TObject *Sender);
+  void __fastcall CleanButtonClick(TObject *Sender);
   void __fastcall AddButtonClick(TObject *Sender);
   void __fastcall CountButtonClick(TObject *Sender);
   void __fastcall AddNumberEditChange(TObject *Sender);

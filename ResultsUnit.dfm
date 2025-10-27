@@ -704,9 +704,9 @@ object FeisEnterForm: TFeisEnterForm
     OnClick = CountButtonClick
   end
   object SaveButton: TButton
-    Left = 576
+    Left = 584
     Top = 320
-    Width = 81
+    Width = 73
     Height = 25
     Anchors = [akTop, akRight]
     Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
@@ -767,9 +767,9 @@ object FeisEnterForm: TFeisEnterForm
     OnClick = CloseButtonClick
   end
   object HelpButton: TButton
-    Left = 488
+    Left = 520
     Top = 320
-    Width = 81
+    Width = 57
     Height = 25
     Anchors = [akTop, akRight]
     Caption = #1057#1087#1088#1072#1074#1082#1072
@@ -786,7 +786,7 @@ object FeisEnterForm: TFeisEnterForm
     OnClick = ConclusionButtonClick
   end
   object MergeButton: TButton
-    Left = 336
+    Left = 328
     Top = 320
     Width = 121
     Height = 25
@@ -813,5 +813,20 @@ object FeisEnterForm: TFeisEnterForm
     Caption = #1042#1089#1077' '#1084#1077#1089#1090#1072
     State = cbGrayed
     TabOrder = 13
+  end
+  object ButtonClean: TButton
+    Left = 456
+    Top = 320
+    Width = 57
+    Height = 25
+    Hint = 
+      #1054#1095#1080#1097#1072#1077#1090' '#1091' '#1074#1099#1073#1088#1072#1085#1085#1086#1081' '#1075#1088#1091#1087#1087#1099' '#1074#1089#1077' '#1073#1072#1083#1083#1099' ('#1074#1074#1077#1076#1105#1085#1085#1099#1077' '#1080' '#1087#1086#1089#1095#1080#1090#1072#1085#1085#1099#1077'), ' +
+      #1084#1077#1089#1090#1072' '#1080' '#1092#1083#1072#1075#1080' '#1082#1074#1072#1083#1080#1092#1080#1082#1072#1094#1080#1080', '#1085#1086' '#1085#1077' '#1082#1086#1084#1084#1077#1085#1090#1072#1088#1080#1080
+    Anchors = [akTop, akRight]
+    Caption = #1054#1095#1080#1089#1090#1080#1090#1100
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 14
+    OnClick = CleanButtonClick
   end
 end
