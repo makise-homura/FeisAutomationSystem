@@ -114,8 +114,24 @@ void FormSchedule(int *Row, TExcel *Excel, TPanel *Warning, AnsiString Class, TC
   for (int i = 0; i < num; ++i)
     for (int j = 0; j < TotalGroups; ++j)
       if (Groups[Dances[i]][j] != "")
+      {
         if (GroupList->IndexOf(Groups[Dances[i]][j]) == -1)
           GroupList->Add(Groups[Dances[i]][j]);
+      }
+
+  if(GroupList->Count == 1 && GroupList->Strings[0] == "AA")
+  {
+    bool DancersFound = false;
+    for (int i = 0; i < Database->TotalDancers(); ++i)
+    {
+      TDancer *Dancer = Database->GetDancerByIndex(i);
+      if (Dance1 != nil && Dancer->Dances[Dance1]) { DancersFound = true; break; }
+      if (Dance2 != nil && Dancer->Dances[Dance2]) { DancersFound = true; break; }
+      if (Dance3 != nil && Dancer->Dances[Dance3]) { DancersFound = true; break; }
+      if (Dance4 != nil && Dancer->Dances[Dance4]) { DancersFound = true; break; }
+    }
+    if (!DancersFound) return; // Don't add a schedule line if there's no such dance at the feis
+  }
 
   // Sort group list
   GroupList->CustomSort(CustomSortWrapper);
@@ -230,7 +246,7 @@ bool ExportSchedule(AnsiString FileName, TPanel *Warning)
   OutputExcel->PutCell(0, 3, "Stage B");
   OutputExcel->PutCell(0, 4, "Stage C");
   OutputExcel->SetColWidth(0, 7);
-  OutputExcel->SetColWidth(1, 17);
+  OutputExcel->SetColWidth(1, 25);
   OutputExcel->SetColWidth(2, 30);
   OutputExcel->SetColWidth(3, 30);
   OutputExcel->SetColWidth(4, 30);
