@@ -38,7 +38,7 @@ const int MaxQualified[TotalDances] =
 //  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
     1,     1,     1,     1,     1,     1,     1,     1,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0     };
 
-const enum DanceType CountTypes[TotalDances] =
+const enum DanceType CountTypes[TotalDances] =  /* see also NumbersUnit::MarkType */
 //  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
   { conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,
 //  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
@@ -1193,6 +1193,16 @@ void __fastcall TFeisEnterForm::CountButtonClick(TObject *Sender)
       SumColumns(ResultsGrid, 6, 10, 14, 0, 15, false);             // P1,P2,P3 -> P
       SortGrid(ResultsGrid, 15, sgDescending);
       AssignPlaces(ResultsGrid, 15, 16, true);
+      if (MaxQualified[SelectedDance] > 0)
+      {
+        int Qualified = 3;
+        if (ResultsGrid->RowCount < 16) Qualified = 2;
+        if (ResultsGrid->RowCount < 11) Qualified = 1;
+        if (ResultsGrid->RowCount < 6)  Qualified = 0;
+        if (Qualified > MaxQualified[SelectedDance]) Qualified = MaxQualified[SelectedDance];
+        for (int i = 1; i < ResultsGrid->RowCount; ++i)
+          ResultsGrid->Cells[17][i] = (ResultsGrid->Cells[16][i].ToInt() <= Qualified) ? "+" : "";
+      }
       ResultsGrid->Row = SaveRow;
       ResultsGrid->Col = SaveCol;
       SaveResults();
@@ -1257,6 +1267,7 @@ void __fastcall TFeisEnterForm::ResultsGridDrawCell(TObject *Sender,
       fill[14] = true;
       fill[15] = true;
       fill[16] = true;
+      if (MaxQualified[SelectedDance] > 0) fill[17] = true;
     break;
     case champ:
       fill[8]  = true;
@@ -1394,7 +1405,8 @@ void __fastcall TFeisEnterForm::ConclusionButtonClick(TObject *Sender)
 
     // The following one is for places, not numbers:
     int MaxQualifiedPlace = 0;
-    if (CountTypes[SelectedDance] != prem)
+    // We don't need this anymore, since we treat premierships now as a generic dance
+    //   if (CountTypes[SelectedDance] != prem)
     {
       // Determine maximal qualified place
       for(int Dancer = 0; Dancer < Database->TotalDancers(); ++Dancer)
@@ -1421,7 +1433,7 @@ void __fastcall TFeisEnterForm::ConclusionButtonClick(TObject *Sender)
         }
       }
     }
-    else
+    /* else
     {
       // Determine total participants number
       int Participants = 0;
@@ -1438,7 +1450,7 @@ void __fastcall TFeisEnterForm::ConclusionButtonClick(TObject *Sender)
       MaxQualifiedPlace = Participants /= 5;
       if(MaxQualified[SelectedDance] < MaxQualifiedPlace) MaxQualifiedPlace = MaxQualified[SelectedDance];
       QualifiedQuantity = MaxQualifiedPlace;
-    }
+    } */
 
     if (QualifiedQuantity == 0)
       Line = "      Переходов в танце нет.";

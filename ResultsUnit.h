@@ -12,6 +12,8 @@
 #include "Database.h"
 #include <ExtCtrls.hpp>
 //---------------------------------------------------------------------------
+extern const int MaxQualified[TotalDances];
+//---------------------------------------------------------------------------
 class TFeisEnterForm : public TForm
 {
 __published:	// IDE-managed Components

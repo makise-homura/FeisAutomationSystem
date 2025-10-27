@@ -7,6 +7,7 @@
 #include "DictDances.h"
 #include "ImportUnit.h"
 #include "NumbersUnit.h"
+#include "ResultsUnit.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "CSPIN"
@@ -324,16 +325,11 @@ void InitSheet(TExcel *Excel, int Columns, AnsiString Texts[], int Widths[])
 }
 //---------------------------------------------------------------------------
 enum MarkType { conv, prem, champ, group, grpch };
-const enum MarkType MarkTypes[TotalDances] =
+const enum MarkType MarkTypes[TotalDances] = /* see also ResultsUnit::DanceType */
 //  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
   { conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,
 //  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
     conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  prem,  champ, group, group, group, grpch, group, grpch };
-const int MaxQualified[TotalDances] =
-//  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
-  { 0,     0,     0,     3,     3,     3,     3,     3,     3,     3,     0,     2,     2,     2,     2,     2,     2,     2,     0,
-//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
-    1,     1,     1,     1,     1,     1,     1,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0     };
 //---------------------------------------------------------------------------
 int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum Dances Dance, AnsiString Level, AnsiString Header, bool Unnormalized = false, bool AlterSchools = true)
 {
