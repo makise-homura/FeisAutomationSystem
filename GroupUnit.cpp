@@ -826,7 +826,7 @@ void __fastcall TGroupForm::Button4HandClick(TObject *Sender)
   if(SaveGroups()) { SelectedDance = Group4Hand; Renew(); }
 }
 //---------------------------------------------------------------------------
-
+#pragma argsused
 void __fastcall TGroupForm::Button4HandChampClick(TObject *Sender)
 {
   if(SaveGroups()) { SelectedDance = Group4HandChamp; Renew(); }
@@ -838,7 +838,7 @@ void __fastcall TGroupForm::ButtonCeiliClick(TObject *Sender)
   if(SaveGroups()) { SelectedDance = GroupCeili; Renew(); }
 }
 //---------------------------------------------------------------------------
-
+#pragma argsused
 void __fastcall TGroupForm::ButtonCeiliChampClick(TObject *Sender)
 {
   if(SaveGroups()) { SelectedDance = GroupCeiliChamp; Renew(); }
