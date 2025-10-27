@@ -1229,7 +1229,7 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
               // Figures championship should go to dances2, not dances!!!
               if(DGroup->Dances[Group4HandChamp] || DGroup->Dances[GroupCeiliChamp])
               {
-                dances2 += (CostFigure * 2);  // Figure championship cost the double as generic figure
+                dances2 += (CostFigure * (DGroup->Dances[Group4HandChamp]? 2 : 1)); // 4-Hand championship cost the double as generic figure
               }
               else
               {
@@ -1333,9 +1333,9 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
             AnsiString DancerName = TeamStringGet(DGroup->Name, k);
             if (Dancer->Name == DancerName)
             {
-              if(DGroup->Dances[Group4HandChamp] || DGroup->Dances[GroupCeiliChamp])
+              if(DGroup->Dances[Group4HandChamp])
               {
-                dances += (CostFigure * 2);  // Figure championship cost the double as generic figure
+                dances += (CostFigure * 2);  // 4-Hand championship cost the double as generic figure
               }
               else
               {
