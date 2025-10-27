@@ -1631,10 +1631,10 @@ int __fastcall SchoolSortWrapper(TStringList* List, int Index1, int Index2)
   // Skip (Non-WIDA) mark
   AnsiString String1 = StringReplace(List->Strings[Index1], "(Non-WIDA) ", "", TReplaceFlags() << rfReplaceAll);
   AnsiString String2 = StringReplace(List->Strings[Index2], "(Non-WIDA) ", "", TReplaceFlags() << rfReplaceAll);
-  if(String1 == String2) return 0;
   // Descending order:
   if(String1 < String2) return +1;
   if(String1 > String2) return -1;
+  return 0;
 }
 //---------------------------------------------------------------------------
 #pragma argsused
