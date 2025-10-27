@@ -106,6 +106,8 @@ __published:	// IDE-managed Components
   TLabel *Label6;
   TLabel *NoGroupWarn;
   TCheckBox *CheckBoxInitial;
+  TButton *Button4HandChamp;
+  TButton *ButtonCeiliChamp;
   void __fastcall ButtonJump23Click(TObject *Sender);
   void __fastcall ButtonTrebReelClick(TObject *Sender);
   void __fastcall ButtonBegReelClick(TObject *Sender);
@@ -160,6 +162,8 @@ __published:	// IDE-managed Components
   void __fastcall FormShow(TObject *Sender);
   void __fastcall AgesGridDrawCell(TObject *Sender, int ACol, int ARow,
           TRect &Rect, TGridDrawState State);
+  void __fastcall Button4HandChampClick(TObject *Sender);
+  void __fastcall ButtonCeiliChampClick(TObject *Sender);
 private:	// User declarations
   TEdit *ReferenceEdits[TotalGroups];
   TLabel *ReferenceLabels[TotalGroups];

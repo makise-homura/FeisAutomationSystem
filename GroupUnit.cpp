@@ -10,46 +10,62 @@
 TGroupForm *GroupForm;
 extern TFeisDatabase *Database;
 //---------------------------------------------------------------------------
-int SubDanceNum[TotalDancesExt] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                    4, 3, 4, 3, 4, 3, 2, 3 };
-//---------------------------------------------------------------------------
 AnsiString sdNone[4] = {"", "", "", ""};
 AnsiString sdRLSS[4] = {"Reel", "Ligh", "Sing", "Slip"};
 AnsiString sdTHT[4]  = {"Treb", "Horn", "Trad", ""};
 AnsiString sdRS[4]   = {"Reel", "Slip", "", ""};
-AnsiString *SubDancesText[TotalDancesExt] =
-{
-  sdNone,   sdNone,   sdNone,   sdNone,   sdNone,
-  sdNone,   sdNone,   sdNone,   sdNone,   sdNone,
-  sdNone,   sdNone,   sdNone,   sdNone,   sdNone,
-  sdNone,   sdNone,   sdNone,   sdNone,   sdNone,
-  sdNone,   sdNone,   sdNone,   sdNone,   sdNone,
-  sdNone,   sdNone,   sdNone,   sdNone,   sdNone,
-  sdNone,   sdNone,   sdNone,   sdNone,   sdNone,
-  sdNone,   sdNone,   sdNone,
 
-  sdRLSS,   sdTHT,  sdRLSS,   sdTHT,  sdRLSS,   sdTHT,  sdRS,   sdTHT
-};
+enum Dances edNil[4] = {nil, nil, nil, nil};
+
+enum Dances SubDancesSpecialBeginnerSoft[4] = { BeginnerReel, BeginnerLightJig, BeginnerSingleJig, BeginnerSlipJig };
+enum Dances SubDancesSpecialBeginnerHard[4] = { BeginnerTrebleJig, BeginnerHornpipe, BeginnerTradSet, nil };
+enum Dances SubDancesSpecialPrimarySoft[4]  = { PrimaryReel, PrimaryLightJig, PrimarySingleJig, PrimarySlipJig };
+enum Dances SubDancesSpecialPrimaryHard[4]  = { PrimaryTrebleJig, PrimaryHornpipe, PrimaryTradSet, nil };
+enum Dances SubDancesSpecialIntermedSoft[4] = { IntermedReel, IntermedLightJig, IntermedSingleJig, IntermedSlipJig };
+enum Dances SubDancesSpecialIntermedHard[4] = { IntermedTrebleJig, IntermedHornpipe, IntermedTradSet, nil };
+enum Dances SubDancesSpecialOpenSoft[4]     = { OpenReel, OpenSlipJig, nil, nil };
+enum Dances SubDancesSpecialOpenHard[4]     = { OpenTrebleJig, OpenHornpipe, OpenTradSet, nil };
+
+int SubDanceNum[TotalDancesExt];
+AnsiString *SubDancesText[TotalDancesExt];
+enum Dances *SubDances[TotalDancesExt];
 //---------------------------------------------------------------------------
-enum Dances SubDances[TotalDancesExt][4] =
+void FillSubDances(void)
 {
-  { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil },
-  { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil },
-  { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil },
-  { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil },
-  { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil },
-  { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil },
-  { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil },
-  { nil, nil, nil, nil }, { nil, nil, nil, nil }, { nil, nil, nil, nil },
-  { BeginnerReel, BeginnerLightJig, BeginnerSingleJig, BeginnerSlipJig },
-  { BeginnerTrebleJig, BeginnerHornpipe, BeginnerTradSet, nil },
-  { PrimaryReel, PrimaryLightJig, PrimarySingleJig, PrimarySlipJig },
-  { PrimaryTrebleJig, PrimaryHornpipe, PrimaryTradSet, nil },
-  { IntermedReel, IntermedLightJig, IntermedSingleJig, IntermedSlipJig },
-  { IntermedTrebleJig, IntermedHornpipe, IntermedTradSet, nil },
-  { OpenReel, OpenSlipJig, nil, nil },
-  { OpenTrebleJig, OpenHornpipe, OpenTradSet, nil }
-};
+  for (int i = 0; i < TotalDancesExt; ++i)
+  {
+    SubDanceNum[i]   = 0;
+    SubDancesText[i] = sdNone;
+    SubDances[i]     = edNil;
+  }
+
+  SubDanceNum[SpecialBeginnerSoft] = 4;
+  SubDanceNum[SpecialBeginnerHard] = 3;
+  SubDanceNum[SpecialPrimarySoft]  = 4;
+  SubDanceNum[SpecialPrimaryHard]  = 3;
+  SubDanceNum[SpecialIntermedSoft] = 4;
+  SubDanceNum[SpecialIntermedHard] = 3;
+  SubDanceNum[SpecialOpenSoft]     = 2;
+  SubDanceNum[SpecialOpenHard]     = 3;
+
+  SubDancesText[SpecialBeginnerSoft] = sdRLSS;
+  SubDancesText[SpecialBeginnerHard] = sdTHT;
+  SubDancesText[SpecialPrimarySoft]  = sdRLSS;
+  SubDancesText[SpecialPrimaryHard]  = sdTHT;
+  SubDancesText[SpecialIntermedSoft] = sdRLSS;
+  SubDancesText[SpecialIntermedHard] = sdTHT;
+  SubDancesText[SpecialOpenSoft]     = sdRS;
+  SubDancesText[SpecialOpenHard]     = sdTHT;
+
+  SubDances[SpecialBeginnerSoft] =  SubDancesSpecialBeginnerSoft;
+  SubDances[SpecialBeginnerHard] =  SubDancesSpecialBeginnerHard;
+  SubDances[SpecialPrimarySoft]  =  SubDancesSpecialPrimarySoft;
+  SubDances[SpecialPrimaryHard]  =  SubDancesSpecialPrimaryHard;
+  SubDances[SpecialIntermedSoft] =  SubDancesSpecialIntermedSoft;
+  SubDances[SpecialIntermedHard] =  SubDancesSpecialIntermedHard;
+  SubDances[SpecialOpenSoft]     =  SubDancesSpecialOpenSoft;
+  SubDances[SpecialOpenHard]     =  SubDancesSpecialOpenHard;
+}
 //---------------------------------------------------------------------------
 bool isSpecialDance(enum Dances Dance)
 {
@@ -90,8 +106,10 @@ bool TGroupForm::SearchGroupRef(int Age, AnsiString &Group)
 //---------------------------------------------------------------------------
 __fastcall TGroupForm::TGroupForm(TComponent* Owner) : TForm(Owner)
 {
+  FillSubDances();
+
   // We shall not need that until we forget to call TablesFromDatabase():
-  // for (int Dance = 0; Dance < TotalDances; ++Dance) Groups[Dance][0] = "AA";
+  //   for (int Dance = 0; Dance < TotalDances; ++Dance) Groups[Dance][0] = "AA";
 
   SelectedDance = Jump23;
 
@@ -151,6 +169,8 @@ __fastcall TGroupForm::TGroupForm(TComponent* Owner) : TForm(Owner)
   ReferenceButtons[Group3Hand]          = Button3Hand;
   ReferenceButtons[Group4Hand]          = Button4Hand;
   ReferenceButtons[GroupCeili]          = ButtonCeili;
+  ReferenceButtons[Group4HandChamp]     = Button4HandChamp;
+  ReferenceButtons[GroupCeiliChamp]     = ButtonCeiliChamp;
   ReferenceButtons[SpecialBeginnerSoft] = ButtonBegSoft;
   ReferenceButtons[SpecialBeginnerHard] = ButtonBegHard;
   ReferenceButtons[SpecialPrimarySoft]  = ButtonPriSoft;
@@ -286,6 +306,8 @@ bool TGroupForm::SaveGroups()
 bool TGroupForm::CheckGroups()
 {
   AnsiString errmsg = "";
+
+  /* TODO: Probably we need to skip this check for group dances */
 
   // Determine raw quantity of groups
   int Quantity;
@@ -443,7 +465,7 @@ void TGroupForm::Renew()
     for (int i = 0; i < TotalGroups; ++i) ReferenceEdits[i]->Enabled = false;
     ButtonRenew->Enabled = false;
     ButtonInsert->Enabled = false;
-    AgesGrid->ColCount = 4;
+    AgesGrid->ColCount = 5;
     AgesGrid->Cells[3][0] = "Ãðóïïà";
     AgesGrid->ColWidths[3] = 50;
     GroupCol = 3;
@@ -804,10 +826,22 @@ void __fastcall TGroupForm::Button4HandClick(TObject *Sender)
   if(SaveGroups()) { SelectedDance = Group4Hand; Renew(); }
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TGroupForm::Button4HandChampClick(TObject *Sender)
+{
+  if(SaveGroups()) { SelectedDance = Group4HandChamp; Renew(); }
+}
+//---------------------------------------------------------------------------
 #pragma argsused
 void __fastcall TGroupForm::ButtonCeiliClick(TObject *Sender)
 {
   if(SaveGroups()) { SelectedDance = GroupCeili; Renew(); }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TGroupForm::ButtonCeiliChampClick(TObject *Sender)
+{
+  if(SaveGroups()) { SelectedDance = GroupCeiliChamp; Renew(); }
 }
 //---------------------------------------------------------------------------
 #pragma argsused

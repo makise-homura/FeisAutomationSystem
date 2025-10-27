@@ -12,8 +12,8 @@ enum ListType // RadioGroup IDs
   ltGroup = 2
 };
 //---------------------------------------------------------------------------
-#define TotalDances    38 // Total number of dances in enum Dances
-#define TotalDancesExt 46 // The same but including special dance groups for Group form
+#define TotalDances    40 // Total number of dances in enum Dances
+#define TotalDancesExt 48 // The same but including special dance groups for Group form
 enum Dances
 {
   nil = -1,
@@ -58,7 +58,9 @@ enum Dances
   Group2Hand,              // No qualification
   Group3Hand,              // No qualification
   Group4Hand,              // No qualification
+  Group4HandChamp,         // No qualification
   GroupCeili,              // No qualification
+  GroupCeiliChamp,         // No qualification
 
   // Special
   SpecialBeginnerSoft,

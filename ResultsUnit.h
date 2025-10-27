@@ -86,6 +86,8 @@ __published:	// IDE-managed Components
   TCheckBox *AllPlacesCheckBox;
   TLabel *Label1;
   TLabel *Label2;
+  TButton *ButtonCeiliChamp;
+  TButton *Button4HandChamp;
   void __fastcall ButtonJump23Click(TObject *Sender);
   void __fastcall ButtonTrebReelClick(TObject *Sender);
   void __fastcall Button2HandClick(TObject *Sender);
@@ -154,6 +156,8 @@ __published:	// IDE-managed Components
   void __fastcall MergeButtonClick(TObject *Sender);
   void __fastcall AddNameEditChange(TObject *Sender);
   void __fastcall AddNameEditKeyPress(TObject *Sender, char &Key);
+  void __fastcall Button4HandChampClick(TObject *Sender);
+  void __fastcall ButtonCeiliChampClick(TObject *Sender);
 private:	// User declarations
   TButton *ReferenceButtons[TotalDances];
   TButton *ReferenceAgeButtons[TotalGroups];

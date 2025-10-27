@@ -251,6 +251,8 @@ bool ExportSchedule(AnsiString FileName, TPanel *Warning)
   FormSchedule(&Row, OutputExcel, Warning, "Figures (3-Hand)",     clWhite,    1, Group3Hand,          nil,              nil,               nil,             "",     "",      "",       ""     );
   FormSchedule(&Row, OutputExcel, Warning, "Figures (4-Hand)",     clWhite,    1, Group4Hand,          nil,              nil,               nil,             "",     "",      "",       ""     );
   FormSchedule(&Row, OutputExcel, Warning, "Figures (Ceili)",      clWhite,    1, GroupCeili,          nil,              nil,               nil,             "",     "",      "",       ""     );
+  FormSchedule(&Row, OutputExcel, Warning, "4-Hand Championship",  clWhite,    1, Group4HandChamp,     nil,              nil,               nil,             "",     "",      "",       ""     );
+  FormSchedule(&Row, OutputExcel, Warning, "Ceili Championship",   clWhite,    1, GroupCeiliChamp,     nil,              nil,               nil,             "",     "",      "",       ""     );
   FormSchedule(&Row, OutputExcel, Warning, "Results",              clPaleRed,  0, nil,                 nil,              nil,               nil,             "",     "",      "",       ""     );
   FormSchedule(&Row, OutputExcel, Warning, "Int Soft",             clPaleBlue, 4, IntermedReel,        IntermedLightJig, IntermedSingleJig, IntermedSlipJig, "Reel", "Light", "Single", "Slip" );
   FormSchedule(&Row, OutputExcel, Warning, "Int Hard",             clWhite,    3, IntermedTrebleJig,   IntermedHornpipe, IntermedTradSet,   nil,             "Treb", "Horn",  "Trad",   ""     );
@@ -274,6 +276,8 @@ int        StdHeaderW[6] = {6, 8, 8, 30, 35, 40};
 AnsiString PrmHeaderS[9] = {"Position", "Number", "Dancer's Name", "School", "Judge A", "Judge B", "Judge C", "Total", "Comments"};
 int        PrmHeaderW[9] = {8, 8, 30, 35, 9, 9, 9, 8, 40};
 int        PrUHeaderW[9] = {8, 8, 30, 35, 20, 20, 20, 8, 40};
+int        FChHeaderW[9] = {8, 8, 70, 35, 20, 20, 20, 8, 40};
+int        FCUHeaderW[9] = {8, 8, 70, 35, 20, 20, 20, 8, 40};
 AnsiString FigHeaderS[6] = {"Position", "Number", "Points", "Dancer's name", "School name", "Comments"};
 int        FigHeaderW[6] = {8, 8, 8, 70, 35, 40};
 //---------------------------------------------------------------------------
@@ -304,17 +308,17 @@ void InitSheet(TExcel *Excel, int Columns, AnsiString Texts[], int Widths[])
   Excel->SetFontBold();
 }
 //---------------------------------------------------------------------------
-enum MarkType { conv, prem, champ, group };
+enum MarkType { conv, prem, champ, group, grpch };
 const enum MarkType MarkTypes[TotalDances] =
 //  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
   { conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,
-//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR Ceili
-    conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  prem,  champ, group, group, group, group };
+//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
+    conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  prem,  champ, group, group, group, grpch, group, grpch };
 const int MaxQualified[TotalDances] =
 //  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
   { 0,     0,     0,     3,     3,     3,     3,     3,     3,     3,     0,     2,     2,     2,     2,     2,     2,     2,     0,
-//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR Ceili
-    1,     1,     1,     1,     1,     1,     1,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0     };
+//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
+    1,     1,     1,     1,     1,     1,     1,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0     };
 //---------------------------------------------------------------------------
 int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum Dances Dance, AnsiString Level, AnsiString Header, bool Unnormalized = false, bool AlterSchools = true)
 {
@@ -322,7 +326,7 @@ int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum 
   Database->GroupsFromDatabase(Groups);
 
   // Determine width of area
-  int Width = ((MarkTypes[Dance] == prem) || (MarkTypes[Dance] == champ))? 9: 6;
+  int Width = ((MarkTypes[Dance] == prem) || (MarkTypes[Dance] == champ) || (MarkTypes[Dance] == grpch))? 9: 6;
 
   for (int Group = 0; ((Groups[Dance][Group] != "") && (Group < TotalGroups)); ++Group)
   {
@@ -355,7 +359,9 @@ int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum 
 
         case champ:
         case prem: if (Dancer->isGroup) break;
+        case grpch: if (!Dancer->isGroup && (MarkTypes[Dance] == grpch)) break;
           ++Dancers;
+          // if(Dancer->isGroup) Number = "T" + Number; We'll do it later, AFTER sort.
           Excel->PutCell(Row + Dancers, 1, Number);
           Excel->PutCell(Row + Dancers, 2, Dancer->Name);
           Excel->PutCell(Row + Dancers, 3, AlterSchools? AlteredSchool(Dancer->School) : Dancer->School);
@@ -465,6 +471,12 @@ bool ExportResults(AnsiString FileName, TPanel *Warning, bool SaveResults, bool 
     return false;
   }
 
+  OutputExcel->CreateSheet("Figure Championships", ClearAllDatabase);
+  Row = OutputDance(2,   Warning, SaveResults, OutputExcel, Group4HandChamp,     "", "4-Hand Championship", Unnormalized, AlterSchools);
+  Row = OutputDance(Row, Warning, SaveResults, OutputExcel, GroupCeiliChamp,     "", "Ceili Championship", Unnormalized, AlterSchools);
+  if (Row > 2) { InitSheet(OutputExcel, 9, PrmHeaderS, Unnormalized ? FCUHeaderW : FChHeaderW); ClearAllDatabase = false; }
+  else OutputExcel->DeleteSheet(&ClearAllDatabase);
+
   OutputExcel->CreateSheet("Figures", ClearAllDatabase);
   Row = OutputDance(2,   Warning, SaveResults, OutputExcel, Group2Hand,          "", "2-Hand", Unnormalized, AlterSchools);
   Row = OutputDance(Row, Warning, SaveResults, OutputExcel, Group3Hand,          "", "3-Hand", Unnormalized, AlterSchools);
@@ -568,23 +580,9 @@ int OutputStageTable(int Row, TPanel *Warning, TExcel *Excel, enum Dances Dance,
       if (Dancer->AgeGroup[Dance] != Groups[Dance][Group]) continue;
 
       AnsiString Number = Dancer->Number;
-      switch (MarkTypes[Dance])
-      {
-        case conv:  if (Dancer->isGroup) break;
-        case group: if (!Dancer->isGroup && (MarkTypes[Dance] == group)) break;
-          ++Dancers;
-          // if(Dancer->isGroup) Number = "T" + Number; (Do it later!)
-          Excel->PutCell(Row + Dancers, 1, Number);
-          Excel->PutCell(Row + Dancers, 2, Dancer->Name);
-          break;
-
-        case champ:
-        case prem: if (Dancer->isGroup) break;
-          ++Dancers;
-          Excel->PutCell(Row + Dancers, 1, Number);
-          Excel->PutCell(Row + Dancers, 2, Dancer->Name);
-          break;
-      }
+      ++Dancers;
+      Excel->PutCell(Row + Dancers, 1, Number);
+      Excel->PutCell(Row + Dancers, 2, Dancer->Name);
     }
 
     if (Dancers == 0) continue;
@@ -689,6 +687,8 @@ bool ExportStageLists(AnsiString FileName, TPanel *Warning)
   Row = OutputStageTable(Row, Warning, OutputExcel, Group3Hand,          "",      "3-Hand");
   Row = OutputStageTable(Row, Warning, OutputExcel, Group4Hand,          "",      "4-Hand");
   Row = OutputStageTable(Row, Warning, OutputExcel, GroupCeili,          "",      "Ceili");
+  Row = OutputStageTable(Row, Warning, OutputExcel, Group4HandChamp,     "",      "4-Hand Champ");
+  Row = OutputStageTable(Row, Warning, OutputExcel, GroupCeiliChamp,     "",      "Ceili Champ");
   Row = OutputStageTable(Row, Warning, OutputExcel, BeginnerPremiership, "",      "Beg Prem");
   Row = OutputStageTable(Row, Warning, OutputExcel, PrimaryPremiership,  "",      "Prim Prem");
   Row = OutputStageTable(Row, Warning, OutputExcel, IntermedPremiership, "",      "Int Prem");
@@ -707,7 +707,7 @@ AnsiString DanceNames[] =
   "Reel",        "Light Jig",   "Single Jig",  "Slip Jig",   "Treble Jig", "Hornpipe", "Trad Set", "Pri Prem",
   "Reel",        "Light Jig",   "Single Jig",  "Slip Jig",   "Treble Jig", "Hornpipe", "Trad Set", "Int Prem",
   "Reel",                                      "Slip Jig",   "Treble Jig", "Hornpipe", "Trad Set", "Pre Champ", "Champ",
-  "2-Hand Reel", "3-Hand Reel", "4-Hand Reel", "Ceili"
+  "2-Hand Reel", "3-Hand Reel", "4-Hand Reel", "4-Hand Champ", "Ceili", "Ceili Champ"
 };
 //---------------------------------------------------------------------------
 AnsiString DanceLevels[] =
@@ -717,7 +717,7 @@ AnsiString DanceLevels[] =
   "P ", "P ", "P ", "P ", "P ", "P ", "P ", "",      // Primary
   "I ", "I ", "I ", "I ", "I ", "I ", "I ", "",      // Intermediate
   "O ", "O ",             "O ", "O ", "O ", "",  "", // Open
-  "",   "",   "",   ""                               // Group dances
+  "",   "",   "",   "",   "",   ""                   // Group dances
 };
 //---------------------------------------------------------------------------
 const bool DanceIsHard[] =
@@ -727,8 +727,11 @@ const bool DanceIsHard[] =
   false, false, false, false, true,  true,  true,  false,         // Primary
   false, false, false, false, true,  true,  true,  false,         // Intermediate
   false, false,               true,  true,  true,  false, false,  // Open
-  true,  true,  true,  true                                       // Group dances - output at right
+  true,  true,  true,  true,  true,  true                         // Group dances - output at right
 };
+//---------------------------------------------------------------------------
+enum Dances GroupDancesForNumbers[6] = {Group2Hand, Group3Hand, Group4Hand, Group4HandChamp, GroupCeili, GroupCeiliChamp};
+int GroupDancesNumForNumbers = 6;
 //---------------------------------------------------------------------------
 void AddNewNumber(TExcel *Excel, int Pos, bool isGroup, int Number,
                   AnsiString Name, AnsiString School, AnsiString Age,
@@ -954,9 +957,9 @@ bool ExportNumbers(AnsiString FileName, TPanel *Warning, int AdditionalSolo, int
   {
     TDancer *Dancer = Database->GetDancerByNumber(((AnsiString)"T") + i);
     if (Dancer == NULL) continue;
-    for (int j = Group2Hand; j <= GroupCeili; ++j)  // We assume database is consistent
+    for (int fj = 0; fj < GroupDancesNumForNumbers; ++fj)
     {
-      if (Dancer->Dances[j])
+      if (Dancer->Dances[GroupDancesForNumbers[fj]])
       {
         AnsiString Info = "Создается номерок T" + (AnsiString)Dancer->Number + " (всего " + Total + ")";
         Warning->Caption = Info;
@@ -967,9 +970,9 @@ bool ExportNumbers(AnsiString FileName, TPanel *Warning, int AdditionalSolo, int
           CurrentPos,
           true,
           Dancer->Number,
-          DanceNames[j],
+          DanceNames[GroupDancesForNumbers[fj]],
           Dancer->School,
-          Dancer->AgeGroup[j],
+          Dancer->AgeGroup[GroupDancesForNumbers[fj]],
           NULL,
           NULL,
           Dancer->Name
@@ -1213,7 +1216,19 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
           for(int k = 0; k < TeamStringLength(DGroup->Name); ++k)
           {
             AnsiString DancerName = TeamStringGet(DGroup->Name, k);
-            if (Dancer->Name == DancerName) { dances += CostFigure; ++regs; } // [TODO]: figures championship should go to dances2, not dances!!!
+            if (Dancer->Name == DancerName)
+            {
+              // Figures championship should go to dances2, not dances!!!
+              if(DGroup->Dances[Group4HandChamp] || DGroup->Dances[GroupCeiliChamp])
+              {
+                dances2 += CostFigure;  // [TODO]: Does figure championship cost the same as generic figure?
+              }
+              else
+              {
+                dances += CostFigure;
+              }
+              ++regs;
+            }
           }
         }
 
@@ -1308,7 +1323,7 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
           for(int k = 0; k < TeamStringLength(DGroup->Name); ++k)
           {
             AnsiString DancerName = TeamStringGet(DGroup->Name, k);
-            if (Dancer->Name == DancerName) { dances += CostFigure; ++regs; }
+            if (Dancer->Name == DancerName) { dances += CostFigure; ++regs; } // [TODO]: Does figure championship cost the same as generic figure?
           }
         }
 
@@ -1393,11 +1408,11 @@ void ExportBPIOPage(TExcel *OutputExcel, bool WithAgeGroups, AnsiString SchoolFi
   {
     TDancer *Dancer = Database->GetDancerByIndex(i);
     if (!Dancer->isGroup || (SchoolFilter != "" && SchoolFilter != Dancer->School)) continue;
-    for (int j = Group2Hand; j <= GroupCeili; ++j)  // We assume database is consistent
+    for (int fj = 0; fj < GroupDancesNumForNumbers; ++fj)
     {
-      if (Dancer->Dances[j])
+      if (Dancer->Dances[GroupDancesForNumbers[fj]])
       {
-        AnsiString Dance = DanceNames[j] + " " + GroupToString(Dancer->AgeGroup[j]);
+        AnsiString Dance = DanceNames[GroupDancesForNumbers[fj]] + " " + GroupToString(Dancer->AgeGroup[GroupDancesForNumbers[fj]]);
         AnsiString School = Dancer->School;
         if(!HeaderAdded)
         {

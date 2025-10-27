@@ -355,7 +355,7 @@ object FeisEnterForm: TFeisEnterForm
       Top = 120
       Width = 145
       Height = 24
-      Caption = '2-Hand Reel'
+      Caption = '2-Hand Figure'
       TabOrder = 34
       OnClick = Button2HandClick
     end
@@ -364,26 +364,26 @@ object FeisEnterForm: TFeisEnterForm
       Top = 144
       Width = 145
       Height = 24
-      Caption = '3-Hand Reel'
+      Caption = '3-Hand Figure'
       TabOrder = 35
       OnClick = Button3HandClick
     end
     object Button4Hand: TButton
       Left = 16
       Top = 168
-      Width = 145
+      Width = 65
       Height = 24
-      Caption = '4-Hand Reel'
+      Caption = '4-Hand'
       TabOrder = 36
       OnClick = Button4HandClick
     end
     object ButtonCeili: TButton
       Left = 16
       Top = 192
-      Width = 145
+      Width = 65
       Height = 24
       Caption = 'Ceili'
-      TabOrder = 37
+      TabOrder = 38
       OnClick = ButtonCeiliClick
     end
     object SaveNotification: TPanel
@@ -393,7 +393,7 @@ object FeisEnterForm: TFeisEnterForm
       Height = 57
       Caption = #1057#1086#1093#1088#1072#1085#1103#1102' '#1076#1072#1085#1085#1099#1077'...'
       Color = clSkyBlue
-      TabOrder = 38
+      TabOrder = 40
       Visible = False
     end
     object ButtonModernSet: TButton
@@ -410,6 +410,24 @@ object FeisEnterForm: TFeisEnterForm
       ParentFont = False
       TabOrder = 33
       OnClick = ButtonModernSetClick
+    end
+    object ButtonCeiliChamp: TButton
+      Left = 80
+      Top = 192
+      Width = 81
+      Height = 24
+      Caption = 'Ceili Champ'
+      TabOrder = 39
+      OnClick = ButtonCeiliChampClick
+    end
+    object Button4HandChamp: TButton
+      Left = 80
+      Top = 168
+      Width = 81
+      Height = 24
+      Caption = '4-Hand Champ'
+      TabOrder = 37
+      OnClick = Button4HandChampClick
     end
   end
   object GroupBoxAges: TGroupBox

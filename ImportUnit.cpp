@@ -68,7 +68,7 @@ __fastcall TImportForm::TImportForm(TComponent* Owner) : TForm(Owner)
   GroupGrid->ColWidths[0] = 40;
   GroupGrid->ColWidths[1] = 400;
   GroupGrid->ColWidths[2] = 200;
-  GroupGrid->ColWidths[3] = 100;
+  GroupGrid->ColWidths[3] = 150;
 
   CurrentPage = ltList;
 
@@ -174,10 +174,12 @@ AnsiString DancerToGroupDanceType(TDancer *Dancer) // Returns "" on failure
   AnsiString GDT;
 
   enum Dances Dance = nil;
-  if (Dancer->Dances[Group2Hand]) { Dance = Group2Hand; GDT = "2-Hand ";     }
-  if (Dancer->Dances[Group3Hand]) { Dance = Group3Hand; GDT = "3-Hand ";     }
-  if (Dancer->Dances[Group4Hand]) { Dance = Group4Hand; GDT = "4-Hand ";     }
-  if (Dancer->Dances[GroupCeili]) { Dance = GroupCeili; GDT = "Ceili ";      }
+  if (Dancer->Dances[Group2Hand])      { Dance = Group2Hand; GDT = "2-Hand ";       }
+  if (Dancer->Dances[Group3Hand])      { Dance = Group3Hand; GDT = "3-Hand ";       }
+  if (Dancer->Dances[Group4Hand])      { Dance = Group4Hand; GDT = "4-Hand ";       }
+  if (Dancer->Dances[GroupCeili])      { Dance = GroupCeili; GDT = "Ceili ";        }
+  if (Dancer->Dances[Group4HandChamp]) { Dance = Group4HandChamp; GDT = "4-Hand Champ "; }
+  if (Dancer->Dances[GroupCeiliChamp]) { Dance = GroupCeiliChamp; GDT = "Ceili Champ ";  }
   if (Dance == nil) return "";
 
   AnsiString GDA = GroupToString(Dancer->AgeGroup[Dance]);
@@ -187,14 +189,13 @@ AnsiString DancerToGroupDanceType(TDancer *Dancer) // Returns "" on failure
 //---------------------------------------------------------------------------
 enum Dances GroupDanceTypeToDance(AnsiString GDT) // Returns nil on failure
 {
-  enum Dances Dance = nil;
-
-  if (GDT.SubString(1, 7)  == "2-Hand ")     Dance = Group2Hand;
-  if (GDT.SubString(1, 7)  == "3-Hand ")     Dance = Group3Hand;
-  if (GDT.SubString(1, 7)  == "4-Hand ")     Dance = Group4Hand;
-  if (GDT.SubString(1, 6)  == "Ceili ")      Dance = GroupCeili;
-
-  return Dance;
+  if (GDT.SubString(1, 7)  == "2-Hand ")       return Group2Hand;
+  if (GDT.SubString(1, 7)  == "3-Hand ")       return Group3Hand;
+  if (GDT.SubString(1, 13) == "4-Hand Champ ") return Group4HandChamp;
+  if (GDT.SubString(1, 7)  == "4-Hand ")       return Group4Hand;
+  if (GDT.SubString(1, 12) == "Ceili Champ ")  return GroupCeiliChamp;
+  if (GDT.SubString(1, 6)  == "Ceili ")        return GroupCeili;
+  return nil;
 }
 //---------------------------------------------------------------------------
 AnsiString GroupDanceTypeToAgeGroup(AnsiString GDT) // Returns "" on failure
@@ -207,6 +208,8 @@ AnsiString GroupDanceTypeToAgeGroup(AnsiString GDT) // Returns "" on failure
     case Group3Hand: GDT.Delete(1, 7);  break;
     case Group4Hand: GDT.Delete(1, 7);  break;
     case GroupCeili: GDT.Delete(1, 6);  break;
+    case Group4HandChamp: GDT.Delete(1, 13);  break;
+    case GroupCeiliChamp: GDT.Delete(1, 12);  break;
   }
 
   if (GDT == "") return ""; // No age group
@@ -247,7 +250,7 @@ bool MatchDanceLine(AnsiString What, AnsiString Part)
   return What.SubString(1, Part.Length()) == Part;
 }
 //---------------------------------------------------------------------------
-void TImportForm::ImportGroupDance(enum Dances Dance, int MaxParticipants, TDancer *Dancer, AnsiString &Storage)
+/* UNUSED void TImportForm::ImportGroupDance(enum Dances Dance, int MaxParticipants, TDancer *Dancer, AnsiString &Storage)
 {
   TDancer *TeamDancer;
   bool found = false;
@@ -289,7 +292,7 @@ void TImportForm::ImportGroupDance(enum Dances Dance, int MaxParticipants, TDanc
 
   // Step 3. Add a participant to the team
   TeamDancer->Name = TeamStringAdd(TeamDancer->Name, Dancer->Name);
-}
+} */
 //---------------------------------------------------------------------------
 void TImportForm::TableFromDatabase()
 {
@@ -513,10 +516,14 @@ void TImportForm::TableToDatabase()
         Dancer->Dances[Group3Hand] = false;
         Dancer->Dances[Group4Hand] = false;
         Dancer->Dances[GroupCeili] = false;
+        Dancer->Dances[Group4HandChamp] = false;
+        Dancer->Dances[GroupCeiliChamp] = false;
         Dancer->AgeGroup[Group2Hand] = "";
         Dancer->AgeGroup[Group3Hand] = "";
         Dancer->AgeGroup[Group4Hand] = "";
         Dancer->AgeGroup[GroupCeili] = "";
+        Dancer->AgeGroup[Group4HandChamp] = "";
+        Dancer->AgeGroup[GroupCeiliChamp] = "";
       }
 
       // Remove all teams from database if team list is clean. Do it from end so deletion will not cause item skipping.
@@ -552,6 +559,8 @@ void TImportForm::TableToDatabase()
             Dancer->Dances[Group3Hand] = false;
             Dancer->Dances[Group4Hand] = false;
             Dancer->Dances[GroupCeili] = false;
+            Dancer->Dances[Group4HandChamp] = false;
+            Dancer->Dances[GroupCeiliChamp] = false;
 
             enum Dances Dance       = GroupDanceTypeToDance(GroupGrid->Cells[3][Row]);
             if (Dance != nil)
@@ -619,6 +628,8 @@ void TImportForm::TableToDatabase()
         if (Dancer->Dances[Group3Hand]) { Dance = Group3Hand; }
         if (Dancer->Dances[Group4Hand]) { Dance = Group4Hand; }
         if (Dancer->Dances[GroupCeili]) { Dance = GroupCeili; }
+        if (Dancer->Dances[Group4HandChamp]) { Dance = Group4HandChamp; }
+        if (Dancer->Dances[GroupCeiliChamp]) { Dance = GroupCeiliChamp; }
         if (Dance == nil) // Will be catched at window close
         {
           // Why tell about this earlier that user requested it?
@@ -1510,6 +1521,8 @@ void __fastcall TImportForm::ResortFigureButtonClick(TObject *Sender)
     if (DancerG->Dances[Group3Hand]) { Dance = Group3Hand; }
     if (DancerG->Dances[Group4Hand]) { Dance = Group4Hand; }
     if (DancerG->Dances[GroupCeili]) { Dance = GroupCeili; }
+    if (DancerG->Dances[Group4HandChamp]) { Dance = Group4HandChamp; }
+    if (DancerG->Dances[GroupCeiliChamp]) { Dance = GroupCeiliChamp; }
     if (Dance == nil) // Will be catched at window close
     {
       AnsiString msg = "Команда Т" + (AnsiString)DancerG->Number + " не зарегистрирована на групповые танцы.";

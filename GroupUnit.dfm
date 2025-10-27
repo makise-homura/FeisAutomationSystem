@@ -1,6 +1,6 @@
 object GroupForm: TGroupForm
-  Left = 55
-  Top = 92
+  Left = 361
+  Top = 144
   Width = 1189
   Height = 694
   Caption = #1056#1072#1079#1073#1080#1074#1082#1072' '#1090#1072#1085#1094#1086#1088#1086#1074' '#1085#1072' '#1075#1088#1091#1087#1087#1099
@@ -397,7 +397,7 @@ object GroupForm: TGroupForm
       Top = 440
       Width = 145
       Height = 24
-      Caption = '2-Hand Reel'
+      Caption = '2-Hand Figure'
       TabOrder = 33
       OnClick = Button2HandClick
     end
@@ -406,26 +406,26 @@ object GroupForm: TGroupForm
       Top = 464
       Width = 145
       Height = 24
-      Caption = '3-Hand Reel'
+      Caption = '3-Hand Figure'
       TabOrder = 34
       OnClick = Button3HandClick
     end
     object Button4Hand: TButton
       Left = 176
       Top = 488
-      Width = 145
+      Width = 57
       Height = 24
-      Caption = '4-Hand Reel'
+      Caption = '4-Hand'
       TabOrder = 35
       OnClick = Button4HandClick
     end
     object ButtonCeili: TButton
       Left = 176
       Top = 512
-      Width = 145
+      Width = 57
       Height = 24
       Caption = 'Ceili'
-      TabOrder = 36
+      TabOrder = 37
       OnClick = ButtonCeiliClick
     end
     object ButtonBegSoft: TButton
@@ -434,7 +434,7 @@ object GroupForm: TGroupForm
       Width = 64
       Height = 96
       Caption = '(BS)'
-      TabOrder = 37
+      TabOrder = 39
       OnClick = ButtonBegSoftClick
     end
     object ButtonPriSoft: TButton
@@ -443,7 +443,7 @@ object GroupForm: TGroupForm
       Width = 64
       Height = 96
       Caption = '(PS)'
-      TabOrder = 38
+      TabOrder = 40
       OnClick = ButtonPriSoftClick
     end
     object ButtonIntSoft: TButton
@@ -452,7 +452,7 @@ object GroupForm: TGroupForm
       Width = 64
       Height = 96
       Caption = '(IS)'
-      TabOrder = 39
+      TabOrder = 41
       OnClick = ButtonIntSoftClick
     end
     object ButtonBegHard: TButton
@@ -461,7 +461,7 @@ object GroupForm: TGroupForm
       Width = 64
       Height = 72
       Caption = '(BH)'
-      TabOrder = 40
+      TabOrder = 42
       OnClick = ButtonBegHardClick
     end
     object ButtonPriHard: TButton
@@ -470,7 +470,7 @@ object GroupForm: TGroupForm
       Width = 64
       Height = 72
       Caption = '(PH)'
-      TabOrder = 41
+      TabOrder = 43
       OnClick = ButtonPriHardClick
     end
     object ButtonIntHard: TButton
@@ -479,7 +479,7 @@ object GroupForm: TGroupForm
       Width = 64
       Height = 72
       Caption = '(IH)'
-      TabOrder = 42
+      TabOrder = 44
       OnClick = ButtonIntHardClick
     end
     object ButtonOpenHard: TButton
@@ -488,7 +488,7 @@ object GroupForm: TGroupForm
       Width = 64
       Height = 72
       Caption = '(OH)'
-      TabOrder = 43
+      TabOrder = 45
       OnClick = ButtonOpenHardClick
     end
     object ButtonOpenSoft: TButton
@@ -497,7 +497,7 @@ object GroupForm: TGroupForm
       Width = 64
       Height = 48
       Caption = '(OS)'
-      TabOrder = 44
+      TabOrder = 46
       OnClick = ButtonOpenSoftClick
     end
     object ButtonModernSet: TButton
@@ -512,8 +512,26 @@ object GroupForm: TGroupForm
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 45
+      TabOrder = 47
       OnClick = ButtonModernSetClick
+    end
+    object Button4HandChamp: TButton
+      Left = 232
+      Top = 488
+      Width = 89
+      Height = 24
+      Caption = '4-Hand Champ'
+      TabOrder = 36
+      OnClick = Button4HandChampClick
+    end
+    object ButtonCeiliChamp: TButton
+      Left = 232
+      Top = 512
+      Width = 89
+      Height = 24
+      Caption = 'Ceili Champ'
+      TabOrder = 38
+      OnClick = ButtonCeiliChampClick
     end
   end
   object GroupBoxAges: TGroupBox

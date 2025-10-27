@@ -59,7 +59,7 @@ private:	// User declarations
   void TableFromDatabase();
   void SwitchToPage();
   bool CheckCurrentTable(bool LimitedCheck);
-  void ImportGroupDance(enum Dances Dance, int MaxParticipants, TDancer *Dancer, AnsiString &Storage);
+  /* void ImportGroupDance(enum Dances Dance, int MaxParticipants, TDancer *Dancer, AnsiString &Storage); -- unused */
 public:		// User declarations
   __fastcall TImportForm(TComponent* Owner);
   __fastcall ~TImportForm();

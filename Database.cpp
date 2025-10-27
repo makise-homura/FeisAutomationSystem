@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#include <stdio.h>                                              
+#include <stdio.h>
 #pragma hdrstop
 #include "Database.h"
 //---------------------------------------------------------------------------
@@ -8,7 +8,7 @@
 //---------------------------------------------------------------------------
 bool isGroupDance(enum Dances Dance)
 {
-  return (Dance == Group2Hand) || (Dance == Group3Hand) || (Dance == Group4Hand) || (Dance == GroupCeili);
+  return (Dance == Group2Hand) || (Dance == Group3Hand) || (Dance == Group4Hand) || (Dance == GroupCeili) || (Dance == Group4HandChamp) || (Dance == GroupCeiliChamp);
 }
 //---------------------------------------------------------------------------
 AnsiString DanceToStr(int Dance)
@@ -52,7 +52,9 @@ AnsiString DanceToStr(int Dance)
     case Group2Hand:           return "2-Hand";
     case Group3Hand:           return "3-Hand";
     case Group4Hand:           return "4-Hand";
+    case Group4HandChamp:      return "4-Hand Championship";
     case GroupCeili:           return "Ceili";
+    case GroupCeiliChamp:      return "Ceili Championship";
     default:                   return "Ќеизвестный танец";
   }
 }
@@ -280,6 +282,7 @@ TDancer::TDancer()
       Places[i]    = 0;
       Qualified[i] = false;
       AgeGroup[i]  = "";
+      Comment[i]   = "";
     }
 }
 //---------------------------------------------------------------------------
@@ -315,6 +318,10 @@ bool TFeisDatabase::LoadFromFile(AnsiString FileName)
 
         for (j = 0; j < TotalDances; ++j)
         {
+          /* Use this hack to load outdated feis files with less dances than there are today: */
+          /* if (j == Group4HandChamp) continue; */
+          /* if (j == GroupCeiliChamp) continue; */
+
           Dancer->Dances[j]         = DbFile->ReadBool();
           for (int k = 0; k < TotalRounds; ++k)
             Dancer->RawPoints[j][k] = DbFile->ReadInteger(-1, 200000); // Max 2000 points (really reachable is 1200)
@@ -615,10 +622,10 @@ bool TFeisDatabase::ConsistencyCheck(TStrings *ErrorMessages)
         {
           ++detectedgroup;
           bool checkfailed = false;
-          if         (j == Group2Hand)    checkfailed = (TeamStringLength(I->Name) != 2);
-          else    if (j == Group3Hand)    checkfailed = (TeamStringLength(I->Name) != 3);
-          else    if (j == Group4Hand)    checkfailed = (TeamStringLength(I->Name) != 4);
-          else /* if (j == GroupCeili) */ checkfailed = (TeamStringLength(I->Name) != 6) && (TeamStringLength(I->Name) != 8);
+          if         (j == Group2Hand)                                  checkfailed = (TeamStringLength(I->Name) != 2);
+          else    if (j == Group3Hand)                                  checkfailed = (TeamStringLength(I->Name) != 3);
+          else    if ((j == Group4Hand) || (j == Group4HandChamp))      checkfailed = (TeamStringLength(I->Name) != 4);
+          else /* if ((j == GroupCeili) || (j == GroupCeiliChamp)) */   checkfailed = (TeamStringLength(I->Name) != 6) && (TeamStringLength(I->Name) != 8);
 
           if (checkfailed)
             ErrorMessages->Add((AnsiString)"ќшибка: команда T" + I->Number + " (" + I->Name + ") имеет неверное количество участников - исправьте в окне импорта и редактировани€.");
@@ -654,13 +661,17 @@ bool TFeisDatabase::ConsistencyCheck(TStrings *ErrorMessages)
             (I->Dances[Group2Hand] && !J->Dances[Group2Hand]) ||
             (I->Dances[Group3Hand] && !J->Dances[Group3Hand]) ||
             (I->Dances[Group4Hand] && !J->Dances[Group4Hand]) ||
-            (I->Dances[GroupCeili] && !J->Dances[GroupCeili])
+            (I->Dances[GroupCeili] && !J->Dances[GroupCeili]) ||
+            (I->Dances[Group4HandChamp] && !J->Dances[Group4HandChamp]) ||
+            (I->Dances[GroupCeiliChamp] && !J->Dances[GroupCeiliChamp])
           )
           {
             if (I->Dances[Group2Hand]) J->Dances[Group2Hand] = true;
             if (I->Dances[Group3Hand]) J->Dances[Group3Hand] = true;
             if (I->Dances[Group4Hand]) J->Dances[Group4Hand] = true;
             if (I->Dances[GroupCeili]) J->Dances[GroupCeili] = true;
+            if (I->Dances[Group4HandChamp]) J->Dances[Group4HandChamp] = true;
+            if (I->Dances[GroupCeiliChamp]) J->Dances[GroupCeiliChamp] = true;
             ErrorMessages->Add((AnsiString)"ѕредупреждение: танцор " + DancerName + " из команды T" + I->Number + " (" + I->Name + ") не был зарегистрирован на танец этой команды - исправлено автоматически.");
           }
 
@@ -669,6 +680,8 @@ bool TFeisDatabase::ConsistencyCheck(TStrings *ErrorMessages)
           if (I->Dances[Group3Hand] && (I->AgeGroup[Group3Hand] != J->AgeGroup[Group3Hand])) { J->AgeGroup[Group3Hand] = I->AgeGroup[Group3Hand]; fixedgroup = true; }
           if (I->Dances[Group4Hand] && (I->AgeGroup[Group4Hand] != J->AgeGroup[Group4Hand])) { J->AgeGroup[Group4Hand] = I->AgeGroup[Group4Hand]; fixedgroup = true; }
           if (I->Dances[GroupCeili] && (I->AgeGroup[GroupCeili] != J->AgeGroup[GroupCeili])) { J->AgeGroup[GroupCeili] = I->AgeGroup[GroupCeili]; fixedgroup = true; }
+          if (I->Dances[Group4HandChamp] && (I->AgeGroup[Group4HandChamp] != J->AgeGroup[Group4HandChamp])) { J->AgeGroup[Group4HandChamp] = I->AgeGroup[Group4HandChamp]; fixedgroup = true; }
+          if (I->Dances[GroupCeiliChamp] && (I->AgeGroup[GroupCeiliChamp] != J->AgeGroup[GroupCeiliChamp])) { J->AgeGroup[GroupCeiliChamp] = I->AgeGroup[GroupCeiliChamp]; fixedgroup = true; }
           if (fixedgroup)
           {
             ErrorMessages->Add((AnsiString)"ѕредупреждение: танцор " + DancerName + " из команды T" + I->Number + " имел возрастную группу, отличную от группы своей команды - исправлено автоматически.");

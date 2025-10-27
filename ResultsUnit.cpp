@@ -35,26 +35,26 @@ const int MaxQualified[TotalDances] =
 //  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
 //{ 0,     0,     0,     3,     3,     3,     3,     3,     3,     3,     3,     2,     2,     2,     2,     2,     2,     2,     2, -- current WIDA rules allow only one participant to be qualified
   { 0,     0,     0,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR Ceili
-    1,     1,     1,     1,     1,     1,     1,     1,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0    };
+//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
+    1,     1,     1,     1,     1,     1,     1,     1,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0     };
 
 const enum DanceType CountTypes[TotalDances] =
 //  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
   { conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,
-//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR Ceili
-    conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  prem,  champ, conv,  conv,  conv,  conv };
+//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
+    conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  prem,  champ, conv,  conv,  conv,  prem,  conv,  prem  };
 
 const bool ConclusionAllPlaces[TotalDances] =
 //  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
   { true,  true,  true,  true,  false, false, false, false, false, false, true,  true,  false, false, false, false, false, false, true,
-//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR Ceili
-    true,  false, false, false, false, false, false, true,  true,  false, false, false, false, true,  true,  false, false, false, false };
+//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
+    true,  false, false, false, false, false, false, true,  true,  false, false, false, false, true,  true,  false, false, false, false, false, false };
 
 const enum QualificationSentence QualificationSentences[TotalDances] =
 //  Jump23 ModSet TrReel BgReel BgLigh BgSing BgSlip BgTreb BgHorn BgTrad BgPrem PrReel PrLigh PrSing PrSlip PrTreb PrHorn PrTrad PrPrem
   { silnt, silnt, silnt, topri, topri, topri, topri, topri, topri, topri, topri, toint, toint, toint, toint, toint, toint, toint, toint,
-//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR Ceili
-    toopn, nomor, nomor, toopn, toopn, toopn, toopn, toopn, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt };
+//  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
+    toopn, nomor, nomor, toopn, toopn, toopn, toopn, toopn, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt, silnt };
 
 #define MAX_TIE_Y 26
 #define MAX_TIE_X 4
@@ -132,7 +132,9 @@ __fastcall TFeisEnterForm::TFeisEnterForm(TComponent* Owner) : TForm(Owner)
   ReferenceButtons[Group2Hand]          = Button2Hand;
   ReferenceButtons[Group3Hand]          = Button3Hand;
   ReferenceButtons[Group4Hand]          = Button4Hand;
+  ReferenceButtons[Group4HandChamp]     = Button4HandChamp;
   ReferenceButtons[GroupCeili]          = ButtonCeili;
+  ReferenceButtons[GroupCeiliChamp]     = ButtonCeiliChamp;
 
   ReferenceAgeButtons[0]                = ButtonAgeGroup1;
   ReferenceAgeButtons[1]                = ButtonAgeGroup2;
@@ -854,9 +856,21 @@ void __fastcall TFeisEnterForm::Button4HandClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 #pragma argsused
+void __fastcall TFeisEnterForm::Button4HandChampClick(TObject *Sender)
+{
+  SaveResults(); ForceRedraw = true; SelectedDance = Group4HandChamp; Renew();
+}
+//---------------------------------------------------------------------------
+#pragma argsused
 void __fastcall TFeisEnterForm::ButtonCeiliClick(TObject *Sender)
 {
   SaveResults(); ForceRedraw = true; SelectedDance = GroupCeili; Renew();
+}
+//---------------------------------------------------------------------------
+#pragma argsused
+void __fastcall TFeisEnterForm::ButtonCeiliChampClick(TObject *Sender)
+{
+  SaveResults(); ForceRedraw = true; SelectedDance = GroupCeiliChamp; Renew();
 }
 //---------------------------------------------------------------------------
 #pragma argsused
@@ -1570,5 +1584,4 @@ void __fastcall TFeisEnterForm::AddNameEditKeyPress(TObject *Sender, char &Key)
     }
   }
 }
-//---------------------------------------------------------------------------
 
