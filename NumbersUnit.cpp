@@ -290,10 +290,9 @@ bool ExportSchedule(AnsiString FileName, TPanel *Warning)
 AnsiString StdHeaderS[6] = {"Place", "Number", "Points", "Dancer's Name", "School", "Comments"};
 int        StdHeaderW[6] = {6, 8, 8, 30, 35, 40};
 AnsiString PrmHeaderS[9] = {"Position", "Number", "Dancer's Name", "School", "Judge A", "Judge B", "Judge C", "Total", "Comments"};
-int        PrmHeaderW[9] = {8, 8, 30, 35, 9, 9, 9, 8, 40};
+int        PrmHeaderW[9] = {8, 8, 30, 35, 9,  9,  9, 8, 40};
 int        PrUHeaderW[9] = {8, 8, 30, 35, 20, 20, 20, 8, 40};
-int        FChHeaderW[9] = {8, 8, 70, 35, 20, 20, 20, 8, 40};
-int        FCUHeaderW[9] = {8, 8, 70, 35, 20, 20, 20, 8, 40};
+int        FChHeaderW[9] = {8, 8, 70, 35, 9,  9,  9, 8, 40};
 AnsiString FigHeaderS[6] = {"Position", "Number", "Points", "Dancer's name", "School name", "Comments"};
 int        FigHeaderW[6] = {8, 8, 8, 70, 35, 40};
 //---------------------------------------------------------------------------
@@ -490,7 +489,7 @@ bool ExportResults(AnsiString FileName, TPanel *Warning, bool SaveResults, bool 
   OutputExcel->CreateSheet("Figure Championships", ClearAllDatabase);
   Row = OutputDance(2,   Warning, SaveResults, OutputExcel, Group4HandChamp,     "", "4-Hand Championship", Unnormalized, AlterSchools);
   Row = OutputDance(Row, Warning, SaveResults, OutputExcel, GroupCeiliChamp,     "", "Ceili Championship", Unnormalized, AlterSchools);
-  if (Row > 2) { InitSheet(OutputExcel, 9, PrmHeaderS, Unnormalized ? FCUHeaderW : FChHeaderW); ClearAllDatabase = false; }
+  if (Row > 2) { InitSheet(OutputExcel, 9, PrmHeaderS, FChHeaderW); ClearAllDatabase = false; }
   else OutputExcel->DeleteSheet(&ClearAllDatabase);
 
   OutputExcel->CreateSheet("Figures", ClearAllDatabase);
