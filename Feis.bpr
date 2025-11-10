@@ -6,13 +6,14 @@
     <PROJECT value="Feis.exe"/>
     <OBJFILES value="Feis.obj StartupUnit.obj ImportUnit.obj Excel.obj GroupUnit.obj 
       Database.obj ResultsUnit.obj Grids.obj NumbersUnit.obj ManageTeamUnit.obj 
-      LogUnit.obj DeclarationUnit.obj DictDances.obj"/>
+      LogUnit.obj DeclarationUnit.obj DictDances.obj ProtocolSelectUnit.obj"/>
     <RESFILES value="Feis.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES) StartupUnit.dfm ImportUnit.dfm GroupUnit.dfm ResultsUnit.dfm 
-      NumbersUnit.dfm ManageTeamUnit.dfm LogUnit.dfm DeclarationUnit.dfm"/>
+      NumbersUnit.dfm ManageTeamUnit.dfm LogUnit.dfm DeclarationUnit.dfm 
+      ProtocolSelectUnit.dfm"/>
     <LIBFILES value=""/>
     <LIBRARIES value="vclx.lib bcbsmp.lib dsnap.lib bdertl.lib vcldb.lib dbrtl.lib rtl.lib vcl.lib"/>
     <SPARELIBS value="vcl.lib rtl.lib dbrtl.lib vcldb.lib bdertl.lib dsnap.lib bcbsmp.lib vclx.lib"/>
@@ -72,6 +73,7 @@
       <FILE FILENAME="LogUnit.cpp" FORMNAME="LogForm" UNITNAME="LogUnit" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="DeclarationUnit.cpp" FORMNAME="DeclarationForm" UNITNAME="DeclarationUnit" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="DictDances.cpp" FORMNAME="" UNITNAME="DictDances" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="ProtocolSelectUnit.cpp" FORMNAME="ProtocolSelectForm" UNITNAME="ProtocolSelectUnit" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

@@ -9,6 +9,7 @@
 #include "StartupUnit.h"
 #include "GroupUnit.h"
 #include "DeclarationUnit.h"
+#include "ProtocolSelectUnit.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -89,6 +90,43 @@ int Ties[MAX_TIE_Y][MAX_TIE_X] =
   {  2500, 2450, 2400, 2350 }
 };
 
+//---------------------------------------------------------------------------
+struct { int N, T, P; } Pseudoplaces[1000];
+int PseudoplacesN = 0;
+void EmptyPseudoplaces() { PseudoplacesN = 0; }
+void AddPseudoplace(int N, int T) { Pseudoplaces[PseudoplacesN].N = N; Pseudoplaces[PseudoplacesN].T = T; ++PseudoplacesN; }
+int GetPseudoplace(int N) { for(int i = 0; i < PseudoplacesN; ++i) {if (Pseudoplaces[i].N == N) return Pseudoplaces[i].P;}; return -1; } ;
+void AssignPseudoplaces()
+{
+  bool swapped;
+  for (int i = 0; i < PseudoplacesN - 1; ++i)
+  {
+    swapped = false;
+    for (int j = 0; j < PseudoplacesN - i - 1; ++j)
+    {
+      if (Pseudoplaces[j].T < Pseudoplaces[j+1].T)
+      {
+        int n = Pseudoplaces[j].N;
+        int t = Pseudoplaces[j].T;
+        Pseudoplaces[j].N = Pseudoplaces[j+1].N;
+        Pseudoplaces[j].T = Pseudoplaces[j+1].T;
+        Pseudoplaces[j+1].N = n;
+        Pseudoplaces[j+1].T = t;
+        swapped = true;
+      }
+    }
+    if (!swapped) break;
+  }
+  int PP = 1;
+  for (int i = 0; i < PseudoplacesN; ++i)
+  {
+    if (i > 0)
+    {
+      if (Pseudoplaces[i].T != Pseudoplaces[i-1].T) ++PP;
+    }
+    Pseudoplaces[i].P = PP;
+  }
+}
 //---------------------------------------------------------------------------
 __fastcall TFeisEnterForm::TFeisEnterForm(TComponent* Owner) : TForm(Owner)
 {
@@ -514,7 +552,9 @@ void TFeisEnterForm::Renew()
   ResultsGrid->RowCount = 2;
   ResultsGrid->Rows[1]->Clear();
 
-  // Stage C3: Prepare column data
+  // Stage C3: Prepare column data and configure declaration button
+  ConclusionButton->Caption = "Объявить";
+  ConclusionButton->ShowHint = false;
   switch (CountTypes[SelectedDance])
   {
     case conv:
@@ -562,6 +602,8 @@ void TFeisEnterForm::Renew()
       ResultsGrid->Cells[20][0]  = "3:P";
       ResultsGrid->Cells[21][0]  = "Р";
       ResultsGrid->Cells[22][0]  = "М";
+      ConclusionButton->Caption = "Объявить [?]";
+      ConclusionButton->ShowHint = true;
     break;
   }
 
@@ -1288,6 +1330,7 @@ void __fastcall TFeisEnterForm::ResultsGridDrawCell(TObject *Sender,
 #pragma argsused
 void __fastcall TFeisEnterForm::ConclusionButtonClick(TObject *Sender)
 {
+  int RawPointsIndex = -1;
   // Save current results
   SaveResults();
 
@@ -1300,6 +1343,12 @@ void __fastcall TFeisEnterForm::ConclusionButtonClick(TObject *Sender)
         Application->MessageBox("Внимание! Результаты не были подсчитаны до объявления.\nНажмите кнопку \"Подсчитать результаты\" и проверьте их правильность, прежде чем объявлять.","Пересчёт результатов",MB_OK);
         return;
     }
+  }
+
+  if (CountTypes[SelectedDance] == champ && (GetAsyncKeyState(VK_CONTROL) & 0x8000))
+  {
+    if (ProtocolSelectForm->ShowModal() != mrOk) return;
+    RawPointsIndex = 6 * ProtocolSelectForm->JudgeGroup->ItemIndex + ProtocolSelectForm->RoundGroup->ItemIndex;
   }
 
   DeclarationForm->ConclusionText->Lines->Clear();
@@ -1316,8 +1365,17 @@ void __fastcall TFeisEnterForm::ConclusionButtonClick(TObject *Sender)
   for(int Dancer = 0; Dancer < Database->TotalDancers(); ++Dancer)
   {
     TDancer *D = Database->GetDancerByIndex(Dancer);
-    if (D->Dances[SelectedDance] && (D->AgeGroup[SelectedDance] == ReferenceAgeButtons[SelectedGroup]->Caption) && (D->Places[SelectedDance] > MaxPlaces))
-      MaxPlaces = D->Places[SelectedDance];
+    if (D->Dances[SelectedDance] && (D->AgeGroup[SelectedDance] == ReferenceAgeButtons[SelectedGroup]->Caption))
+    {
+      if (RawPointsIndex < 0)
+      {
+        if (D->Places[SelectedDance] > MaxPlaces) MaxPlaces = D->Places[SelectedDance];
+      }
+      else
+      {
+        ++MaxPlaces;
+      }
+    }
   }
   if (MaxPlaces > 3)
   {
@@ -1325,6 +1383,21 @@ void __fastcall TFeisEnterForm::ConclusionButtonClick(TObject *Sender)
     if (AllPlacesCheckBox->State == cbGrayed && !ConclusionAllPlaces[SelectedDance]) MaxPlaces = 3;
   }
   if (MaxPlaces == 0) return; // Looks like this is impossible, but...
+
+  // Create pseudo-places for all dancers in current page if we requested this
+  EmptyPseudoplaces();
+  if(RawPointsIndex >= 0)
+  {
+    for(int Dancer = 0; Dancer < Database->TotalDancers(); ++Dancer)
+    {
+      TDancer *D = Database->GetDancerByIndex(Dancer);
+      if (D->Dances[SelectedDance] && (D->AgeGroup[SelectedDance] == ReferenceAgeButtons[SelectedGroup]->Caption))
+      {
+        AddPseudoplace(D->Number, D->RawPoints[SelectedDance][RawPointsIndex]);
+      }
+    }
+    AssignPseudoplaces();
+  }
 
   // Make a line for every noticeable place
   for (int Place = MaxPlaces; Place >= 1; --Place)
@@ -1334,14 +1407,17 @@ void __fastcall TFeisEnterForm::ConclusionButtonClick(TObject *Sender)
     for(int Dancer = 0; Dancer < Database->TotalDancers(); ++Dancer)
     {
       TDancer *D = Database->GetDancerByIndex(Dancer);
-      if (D->Dances[SelectedDance] && (D->AgeGroup[SelectedDance] == ReferenceAgeButtons[SelectedGroup]->Caption) && (D->Places[SelectedDance] == Place))
+      if (D->Dances[SelectedDance] && (D->AgeGroup[SelectedDance] == ReferenceAgeButtons[SelectedGroup]->Caption))
       {
-        // TODO optional: Sort by numbers
-        ++PlaceQuantity;
-        if (ResultList != "") ResultList += ", ";
-        if (D->isGroup) ResultList += "\r\n        T";
-        ResultList += D->Number;
-        if (D->isGroup) ResultList += " (школа " + D->School + ")";
+        if ((RawPointsIndex < 0 && (D->Places[SelectedDance] == Place)) || (RawPointsIndex >= 0 && (GetPseudoplace(D->Number) == Place)))
+        {
+          // TODO optional: Sort by numbers
+          ++PlaceQuantity;
+          if (ResultList != "") ResultList += ", ";
+          if (D->isGroup) ResultList += "\r\n        T";
+          ResultList += D->Number;
+          if (D->isGroup) ResultList += " (школа " + D->School + ")";
+        }
       }
     }
 
@@ -1354,7 +1430,7 @@ void __fastcall TFeisEnterForm::ConclusionButtonClick(TObject *Sender)
   }
 
   // Append School and Name
-  if ((SelectedDance == PreChampionship || SelectedDance == Championship))
+  if ((SelectedDance == PreChampionship || SelectedDance == Championship) && RawPointsIndex < 0)
   {
     AnsiString ResultList = "";
     int PlaceQuantity = 0;

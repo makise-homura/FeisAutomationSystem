@@ -11,6 +11,7 @@ USEFORM("NumbersUnit.cpp", NumbersForm);
 USEFORM("ManageTeamUnit.cpp", ManageTeamForm);
 USEFORM("LogUnit.cpp", LogForm);
 USEFORM("DeclarationUnit.cpp", DeclarationForm);
+USEFORM("ProtocolSelectUnit.cpp", ProtocolSelectForm);
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -26,6 +27,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
      Application->CreateForm(__classid(TManageTeamForm), &ManageTeamForm);
      Application->CreateForm(__classid(TLogForm), &LogForm);
      Application->CreateForm(__classid(TDeclarationForm), &DeclarationForm);
+     Application->CreateForm(__classid(TProtocolSelectForm), &ProtocolSelectForm);
      Application->Run();
         }
         catch (Exception &exception)
