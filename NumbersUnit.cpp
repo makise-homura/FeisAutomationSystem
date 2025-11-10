@@ -752,30 +752,21 @@ void AddNewNumber(TExcel *Excel, int Pos, bool isGroup, int Number,
 {
   // Step 1. Create big number area
   AnsiString NumPrefix = isGroup ? "T" : "";
-  /* Previously it was like this:
-    Excel->SelectRange(0, Pos * 32, 8, 16);
-    Excel->Join();
-    Excel->SetRowHeight(-1, 15);
-    Excel->SetValue(NumPrefix + Number);
-    Excel->SetAlignment(xlCenter, xlCenter);
-    Excel->SetFontFace("Arial Narrow");
-    Excel->SetFontBold();
-    Excel->SetFontSize(230);
-    Excel->SelectRange(0, Pos * 32 + 16, 1, 2);
-    Excel->SetRowHeight(-1, 17);
-  */
 
-  // Championship numbers format is as follows:
+  // Number format is as follows:
   Excel->SelectRange(0, Pos * 32, 9, 16);
-  Excel->Join();
   Excel->SetRowHeight(-1, 15);
+  Excel->SelectRange(0, Pos * 32 + 4, 9, 12);
+  Excel->Join();
   Excel->SetValue(NumPrefix + Number);
   Excel->SetAlignment(xlCenter, xlCenter);
   Excel->SetFontFace("Arial Narrow");
   Excel->SetFontBold();
   Excel->SetFontSize(200);
-  Excel->SelectRange(0, Pos * 32 + 16, 1, 3);
+  Excel->SelectRange(0, Pos * 32 + 16, 1, 1);
   Excel->SetRowHeight(-1, 16);
+  Excel->SelectRange(0, Pos * 32 + 17, 1, 2);
+  Excel->SetRowHeight(-1, 8);
 
   // Step 2. Write number, name, age, school
   Excel->SelectCell(Pos * 32 + 19, 1);
@@ -804,7 +795,7 @@ void AddNewNumber(TExcel *Excel, int Pos, bool isGroup, int Number,
   Excel->SetFontSize(11);
 
   Excel->SelectRange(2, Pos * 32 + 20, 4, 1);
-  Excel->SetRowHeight(-1, 24);
+  Excel->SetRowHeight(-1, 32);
   Excel->Join();
   Excel->SetValue(AlteredSchool(School));
   Excel->SetAlignment(xlLeft, xlTop);
@@ -815,7 +806,7 @@ void AddNewNumber(TExcel *Excel, int Pos, bool isGroup, int Number,
   Excel->SelectRange(1, Pos * 32 + 30, 6, 1);
   Excel->SetRowHeight(-1, 10);
   Excel->SelectRange(1, Pos * 32 + 31, 6, 1);
-  Excel->SetRowHeight(-1, 1);
+  Excel->SetRowHeight(-1, 9);
   Excel->SelectRange(1, Pos * 32 + 21, 6, 9);
   //Excel->SetBorder(xlEdgeTop, xlContinuous, xlThin);
   Excel->SetRowHeight(-1, 15);
@@ -895,12 +886,12 @@ bool ExportNumbers(AnsiString FileName, TPanel *Warning, int AdditionalSolo, int
   OutputExcel->SetColWidth(0, 3);
   OutputExcel->SetColWidth(1, 9);
   OutputExcel->SetColWidth(2, 9);
-  OutputExcel->SetColWidth(3, 7);
+  OutputExcel->SetColWidth(3, 5);
   OutputExcel->SetColWidth(4, 9);
   OutputExcel->SetColWidth(5, 9);
   OutputExcel->SetColWidth(6, 8);
-  OutputExcel->SetColWidth(7, 9);
-  OutputExcel->SetColWidth(8, 5 /*1*/);
+  OutputExcel->SetColWidth(7, 8);
+  OutputExcel->SetColWidth(8, 8);
 
   // Step 1. Add every solo dancer
 
