@@ -99,9 +99,9 @@ object StartupForm: TStartupForm
     OnClick = SaveButtonClick
   end
   object LockButton: TButton
-    Left = 416
+    Left = 472
     Top = 280
-    Width = 185
+    Width = 129
     Height = 81
     Caption = #1041#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100' '#1082#1085#1086#1087#1082#1080
     Enabled = False
@@ -175,16 +175,44 @@ object StartupForm: TStartupForm
   end
   object GroupStage3: TGroupBox
     Left = 16
-    Top = 280
-    Width = 385
-    Height = 81
+    Top = 272
+    Width = 449
+    Height = 89
     Caption = ' '#1056#1072#1073#1086#1090#1072' '#1089' '#1088#1077#1079#1091#1083#1100#1090#1072#1090#1072#1084#1080' '
     TabOrder = 9
+    object LabelSCJudge: TLabel
+      Left = 408
+      Top = 16
+      Width = 30
+      Height = 13
+      Caption = #1057#1091#1076#1100#1103
+    end
+    object LabelSCRound: TLabel
+      Left = 376
+      Top = 16
+      Width = 30
+      Height = 13
+      Caption = #1056#1072#1091#1085#1076
+    end
+    object LabelSCRound1: TLabel
+      Left = 390
+      Top = 36
+      Width = 6
+      Height = 13
+      Caption = '1'
+    end
+    object LabelSCRound2: TLabel
+      Left = 390
+      Top = 60
+      Width = 6
+      Height = 13
+      Caption = '2'
+    end
     object ExportButton: TButton
       Left = 16
       Top = 24
-      Width = 353
-      Height = 25
+      Width = 177
+      Height = 49
       Hint = 
         #1053#1072#1078#1084#1080#1090#1077' '#1101#1090#1091' '#1082#1085#1086#1087#1082#1091', '#1095#1090#1086#1073#1099' '#1074#1099#1075#1088#1091#1079#1080#1090#1100' '#1088#1077#1079#1091#1083#1100#1090#1072#1090#1099' '#1087#1088#1086#1074#1077#1076#1077#1085#1085#1086#1075#1086' '#1092#1077#1096#1072 +
         ' '#1074' '#1092#1072#1081#1083', '#1082#1086#1090#1086#1088#1099#1081' '#1079#1072#1090#1077#1084' '#1089#1083#1077#1076#1091#1077#1090' '#1086#1090#1087#1088#1072#1074#1080#1090#1100' '#1074' WIDA '#1076#1083#1103' '#1091#1095#1105#1090#1072' '#1088#1077#1079#1091#1083#1100 +
@@ -197,22 +225,51 @@ object StartupForm: TStartupForm
       OnClick = ExportButtonClick
     end
     object UnnormalizedCheckBox: TCheckBox
-      Left = 16
-      Top = 56
+      Left = 200
+      Top = 24
       Width = 177
       Height = 17
       Caption = #1053#1077#1085#1086#1088#1084#1080#1088#1086#1074#1072#1085#1085#1099#1077' '#1073#1072#1083#1083#1099' '
       TabOrder = 1
     end
     object AlterSchoolsCheckBox: TCheckBox
-      Left = 192
-      Top = 56
+      Left = 200
+      Top = 40
       Width = 177
       Height = 17
       Caption = #1047#1072#1084#1077#1085#1103#1090#1100' '#1096#1082#1086#1083#1099' '#1085#1077' '#1080#1079' WIDA '
       Checked = True
       State = cbChecked
       TabOrder = 2
+    end
+    object SoloChampCheckBox: TCheckBox
+      Left = 200
+      Top = 56
+      Width = 177
+      Height = 17
+      Caption = #1057#1086#1093#1088#1072#1085#1103#1090#1100' '#1089#1086#1083#1086' '#1095#1077#1084#1087#1080#1086#1085#1096#1080#1087#1099':'
+      TabOrder = 3
+      OnClick = SoloChampCheckBoxClick
+    end
+    object Round1Spin: TCSpinEdit
+      Left = 408
+      Top = 32
+      Width = 33
+      Height = 22
+      MaxValue = 3
+      MinValue = 1
+      TabOrder = 4
+      Value = 1
+    end
+    object Round2Spin: TCSpinEdit
+      Left = 408
+      Top = 56
+      Width = 33
+      Height = 22
+      MaxValue = 3
+      MinValue = 1
+      TabOrder = 5
+      Value = 2
     end
   end
   object GroupButton: TButton

@@ -88,8 +88,6 @@ AnsiString TeamStringDelete(AnsiString TeamString, AnsiString Content);
 AnsiString PointsToStr(int Points);
 int PointsToInt(AnsiString String);
 //---------------------------------------------------------------------------
-bool ExportResults(AnsiString FileName, TPanel *Warning, bool SaveResults);
-//---------------------------------------------------------------------------
 class TDancer
 {
   public:

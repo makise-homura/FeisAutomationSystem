@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
+#include <SysUtils.hpp>
+#include <StrUtils.hpp>
 #pragma hdrstop
 
 #include "Excel.h"
@@ -331,13 +333,13 @@ const enum MarkType MarkTypes[TotalDances] = /* see also ResultsUnit::DanceType 
 //  InReel InLigh InSing InSlip InTreb InHorn InTrad InPrem OpReel OpSlip OpTreb OpHorn OpTrad PreChm Champs 2HandR 3HandR 4HandR 4HandC Ceili  CeiliC
     conv,  conv,  conv,  conv,  conv,  conv,  conv,  prem,  conv,  conv,  conv,  conv,  conv,  prem,  champ, group, group, group, grpch, group, grpch };
 //---------------------------------------------------------------------------
-int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum Dances Dance, AnsiString Level, AnsiString Header, bool Unnormalized = false, bool AlterSchools = true)
+int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum Dances Dance, AnsiString Level, AnsiString Header, bool Unnormalized, bool AlterSchools, int RawPointIndex = -1)
 {
   AnsiString Groups[TotalDances][TotalGroups];
   Database->GroupsFromDatabase(Groups);
 
   // Determine width of area
-  int Width = ((MarkTypes[Dance] == prem) || (MarkTypes[Dance] == champ) || (MarkTypes[Dance] == grpch))? 9: 6;
+  int Width = (RawPointIndex >= 0) ? 5 : ((MarkTypes[Dance] == prem || MarkTypes[Dance] == champ || MarkTypes[Dance] == grpch)) ? 9 : 6;
 
   for (int Group = 0; ((Groups[Dance][Group] != "") && (Group < TotalGroups)); ++Group)
   {
@@ -353,7 +355,7 @@ int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum 
       if (Dancer->AgeGroup[Dance] != Groups[Dance][Group]) continue;
 
       AnsiString Number = Dancer->Number;
-      switch (MarkTypes[Dance])
+      switch (RawPointIndex < 0 ? MarkTypes[Dance]: conv)
       {
         case conv:  if (Dancer->isGroup) break;
         case group: if (!Dancer->isGroup && (MarkTypes[Dance] == group)) break;
@@ -364,8 +366,8 @@ int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum 
           Excel->PutCell(Row + Dancers, 4, AlterSchools? AlteredSchool(Dancer->School) : Dancer->School);
           if(!SaveResults) break;
           Excel->PutCell(Row + Dancers, 0, Dancer->Places[Dance]);
-          Excel->PutCell(Row + Dancers, 2, PointsToStr(Dancer->CalcPoints[Dance]));
-          Excel->PutCell(Row + Dancers, 5, Dancer->Comment[Dance]);
+          Excel->PutCell(Row + Dancers, 2, PointsToStr(RawPointIndex < 0 ? Dancer->CalcPoints[Dance] : Dancer->RawPoints[Dance][RawPointIndex]));
+          if (Width > 5) Excel->PutCell(Row + Dancers, 5, Dancer->Comment[Dance]);
           break;
 
         case champ:
@@ -425,8 +427,42 @@ int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum 
     Excel->SetFontFace("Calibri");
     Excel->SetFontSize(11);
 
-    // Sort by numbers or places
-    Excel->Sort(0, Row + 1, Width, Dancers + 1, SaveResults? 0: 1, xlAscending);
+    // Assign places for solo championships
+    if(RawPointIndex >= 0)
+    {
+      // Prepare to sort: replace all "." to current decimal separator
+      if (DecimalSeparator != '.')
+      {
+        for(int ChkRow = 0; ChkRow < Dancers; ++ChkRow)
+        {
+          Excel->PutCell(Row + 1 + ChkRow, 2, AnsiReplaceStr(Excel->GetCell(Row + 1 + ChkRow, 2), ".", DecimalSeparator));
+        }
+      }
+
+      // Sort by points, descending
+      Excel->Sort(0, Row + 1, Width, Dancers, 2, xlDescending);
+      int Place = 1;
+      Excel->PutCell(Row + 1, 0, Place);
+      for(int ChkRow = 1; ChkRow < Dancers; ++ChkRow)
+      {
+        if(PointsToInt(Excel->GetCell(Row + 1 + ChkRow, 2)) != PointsToInt(Excel->GetCell(Row + 1 + ChkRow - 1, 2))) ++Place;
+        Excel->PutCell(Row + 1 + ChkRow, 0, Place);
+      }
+
+      // After sort: revert decimal separator to "."
+      if (DecimalSeparator != '.')
+      {
+        for(int ChkRow = 0; ChkRow < Dancers; ++ChkRow)
+        {
+          Excel->PutCell(Row + 1 + ChkRow, 2, AnsiReplaceStr(Excel->GetCell(Row + 1 + ChkRow, 2), DecimalSeparator, "."));
+        }
+      }
+    }
+    else
+    {
+      // Sort by numbers or places
+      Excel->Sort(0, Row + 1, Width, Dancers, SaveResults? 0 : 1, xlAscending);
+    }
 
     // Add "T" to every number
     if(isGroupDance(Dance))
@@ -438,7 +474,7 @@ int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum 
     }
 
     // Write qualification and set color of qualified line
-    if(SaveResults && (MaxQualified[Dance] > 0))
+    if(SaveResults && (MaxQualified[Dance] > 0) && RawPointIndex < 0)
     {
       for (int i = 0; i < Dancers; ++i)
       {
@@ -464,7 +500,7 @@ int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum 
   return Row;
 }
 //---------------------------------------------------------------------------
-bool ExportResults(AnsiString FileName, TPanel *Warning, bool SaveResults, bool Unnormalized, bool AlterSchools)
+bool ExportResults(AnsiString FileName, TPanel *Warning, bool SaveResults, bool Unnormalized, bool AlterSchools, int SoloChampionshipJudgeRound1, int SoloChampionshipJudgeRound2)
 {
   bool ClearAllDatabase = true;
   int Row;
@@ -495,6 +531,15 @@ bool ExportResults(AnsiString FileName, TPanel *Warning, bool SaveResults, bool 
   Row = OutputDance(Row, Warning, SaveResults, OutputExcel, GroupCeili,          "", "Ceili", Unnormalized, AlterSchools);
   if (Row > 2) { InitSheet(OutputExcel, 6, FigHeaderS, FigHeaderW); ClearAllDatabase = false; }
   else OutputExcel->DeleteSheet(&ClearAllDatabase);
+
+  if(SoloChampionshipJudgeRound1 > 0 && SoloChampionshipJudgeRound2 > 0)
+  {
+    OutputExcel->CreateSheet("Solo Championships", ClearAllDatabase);
+    Row = OutputDance(2,   Warning, SaveResults, OutputExcel, Championship,        "", "Solo Championship Round 1", Unnormalized, AlterSchools, (SoloChampionshipJudgeRound1 - 1) * 6);
+    Row = OutputDance(Row, Warning, SaveResults, OutputExcel, Championship,        "", "Solo Championship Round 2", Unnormalized, AlterSchools, (SoloChampionshipJudgeRound2 - 1) * 6 + 1);
+    if (Row > 2) { InitSheet(OutputExcel, 5, StdHeaderS, StdHeaderW); ClearAllDatabase = false; }
+    else OutputExcel->DeleteSheet(&ClearAllDatabase);
+  }
 
   OutputExcel->CreateSheet("Championship", ClearAllDatabase);
   Row = OutputDance(2,   Warning, SaveResults, OutputExcel, Championship,        "", "Championship", Unnormalized, AlterSchools);
@@ -1589,7 +1634,7 @@ void __fastcall TNumbersForm::ButtonCreateNumbersClick(TObject *Sender)
 void __fastcall TNumbersForm::ButtonCreateEmptyResultsClick(TObject *Sender)
 {
   if (!SaveDialogEmptyResults->Execute()) return;
-  if (ExportResults(SaveDialogEmptyResults->FileName, PanelWarning, false, false))
+  if (ExportResults(SaveDialogEmptyResults->FileName, PanelWarning))
     Application->MessageBox("Создание файла пустой формы результатов завершено.\nТеперь каждый лист этой формы следует вставить в файл с макросами (например, XLSM-файл с одного из прошлых фешей).", "Экспорт пустой формы результатов", MB_OK);
 }
 //---------------------------------------------------------------------------

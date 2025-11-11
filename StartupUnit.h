@@ -15,6 +15,7 @@
 #include <ExtCtrls.hpp>
 #include "Excel.h"
 #include "Database.h"
+#include "CSPIN.h"
 //---------------------------------------------------------------------------
 enum dbops { doNew, doLoad };
 //---------------------------------------------------------------------------
@@ -43,6 +44,13 @@ __published:	// IDE-managed Components
   TLabel *Label1;
   TCheckBox *UnnormalizedCheckBox;
   TCheckBox *AlterSchoolsCheckBox;
+  TCheckBox *SoloChampCheckBox;
+  TCSpinEdit *Round1Spin;
+  TCSpinEdit *Round2Spin;
+  TLabel *LabelSCJudge;
+  TLabel *LabelSCRound;
+  TLabel *LabelSCRound1;
+  TLabel *LabelSCRound2;
   void __fastcall QuitButtonClick(TObject *Sender);
   void __fastcall OpenFeisButtonClick(TObject *Sender);
   void __fastcall NewFeisButtonClick(TObject *Sender);
@@ -54,11 +62,11 @@ __published:	// IDE-managed Components
   void __fastcall SaveButtonClick(TObject *Sender);
   void __fastcall FilesButtonClick(TObject *Sender);
   void __fastcall LockButtonClick(TObject *Sender);
+  void __fastcall SoloChampCheckBoxClick(TObject *Sender);
 private:	// User declarations
   bool FeisOpened;
   AnsiString Filename;
   void DatabaseInit(enum dbops Operation);
-  void OutputDance(TExcel *Excel, enum Dances Dance, AnsiString Header);
 public:		// User declarations
   bool SaveDatabase();
   __fastcall TStartupForm(TComponent* Owner);

@@ -13,7 +13,7 @@
 #include "Database.h"
 #include "CSPIN.h"
 //---------------------------------------------------------------------------
-bool ExportResults(AnsiString FileName, TPanel *Warning, bool SaveResults, bool Unnormalized, bool AlterSchools = true);
+bool ExportResults(AnsiString FileName, TPanel *Warning, bool SaveResults = false, bool Unnormalized = false, bool AlterSchools = true, int SoloChampionshipJudgeRound1 = -1, int SoloChampionshipJudgeRound2 = -1);
 //---------------------------------------------------------------------------
 class TNumbersForm : public TForm
 {

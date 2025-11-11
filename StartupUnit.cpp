@@ -10,6 +10,7 @@
 #include "Excel.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
+#pragma link "CSPIN"
 #pragma resource "*.dfm"
 TStartupForm *StartupForm;
 TFeisDatabase *Database;
@@ -18,6 +19,7 @@ __fastcall TStartupForm::TStartupForm(TComponent* Owner) : TForm(Owner)
 {
   Database = new TFeisDatabase;
   FeisOpened = false;
+  SoloChampCheckBoxClick(NULL);
 }
 //---------------------------------------------------------------------------
 __fastcall TStartupForm::~TStartupForm()
@@ -137,7 +139,7 @@ void __fastcall TStartupForm::ResultsButtonClick(TObject *Sender)
 void __fastcall TStartupForm::ExportButtonClick(TObject *Sender)
 {
   if (!ExportDialogXLS->Execute()) return;
-  if (ExportResults(ExportDialogXLS->FileName, Warning, true, UnnormalizedCheckBox->Checked, AlterSchoolsCheckBox->Checked))
+  if (ExportResults(ExportDialogXLS->FileName, Warning, true, UnnormalizedCheckBox->Checked, AlterSchoolsCheckBox->Checked, SoloChampCheckBox->Checked?Round1Spin->Value:-1, SoloChampCheckBox->Checked?Round2Spin->Value:-1))
     Application->MessageBox("Ёкспорт результатов в Excel завершен.", "Ёкспорт файла дл€ WIDA", MB_OK);
 }
 //---------------------------------------------------------------------------
@@ -170,5 +172,27 @@ void __fastcall TStartupForm::LockButtonClick(TObject *Sender)
   ActiveControl           = ResultsButton;
 }
 //---------------------------------------------------------------------------
-
+#pragma argsused
+void __fastcall TStartupForm::SoloChampCheckBoxClick(TObject *Sender)
+{
+  if(SoloChampCheckBox->Checked)
+  {
+    Round1Spin->Enabled    = true;
+    Round2Spin->Enabled    = true;
+    LabelSCRound->Enabled  = true;
+    LabelSCRound1->Enabled = true;
+    LabelSCRound2->Enabled = true;
+    LabelSCJudge->Enabled  = true;
+  }
+  else
+  {
+    Round1Spin->Enabled    = false;
+    Round2Spin->Enabled    = false;
+    LabelSCRound->Enabled  = false;
+    LabelSCRound1->Enabled = false;
+    LabelSCRound2->Enabled = false;
+    LabelSCJudge->Enabled  = false;
+  }
+}
+//---------------------------------------------------------------------------
 
