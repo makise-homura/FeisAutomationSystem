@@ -22,6 +22,12 @@ __fastcall TNumbersForm::TNumbersForm(TComponent* Owner)
 {
 }
 //---------------------------------------------------------------------------
+void SortRight(TExcel *Excel, int Row, int Column, int Width)
+{
+  Excel->SelectRange(Column, Row, Width, 1);
+  Excel->SetAlignment(xlRight, xlBottom);
+}
+//---------------------------------------------------------------------------
 AnsiString AlteredSchool(AnsiString School)
 {
   if (School.SubString(1, 10) == "(Non-WIDA)") return "Not associated to any school";
@@ -367,6 +373,7 @@ int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum 
           if(!SaveResults) break;
           Excel->PutCell(Row + Dancers, 0, Dancer->Places[Dance]);
           Excel->PutCell(Row + Dancers, 2, PointsToStr(RawPointIndex < 0 ? Dancer->CalcPoints[Dance] : Dancer->RawPoints[Dance][RawPointIndex]));
+          SortRight(Excel, Row + Dancers, 2, 1);
           if (Width > 5) Excel->PutCell(Row + Dancers, 5, Dancer->Comment[Dance]);
           break;
 
@@ -400,9 +407,11 @@ int OutputDance(int Row, TPanel *Warning, bool SaveResults, TExcel *Excel, enum 
             Excel->PutCell(Row + Dancers, 4, PointsToStr(Dancer->RawPoints[Dance][(Dance == Championship)? 5: 3]));
             Excel->PutCell(Row + Dancers, 5, PointsToStr(Dancer->RawPoints[Dance][(Dance == Championship)? 11: 7]));
             Excel->PutCell(Row + Dancers, 6, PointsToStr(Dancer->RawPoints[Dance][(Dance == Championship)? 17: 11]));
+            SortRight(Excel, Row + Dancers, 4, 3);
           }
           Excel->PutCell(Row + Dancers, 7, PointsToStr(Dancer->CalcPoints[Dance]));
           Excel->PutCell(Row + Dancers, 8, Dancer->Comment[Dance]);
+          SortRight(Excel, Row + Dancers, 7, 1);
           break;
       }
     }
