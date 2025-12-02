@@ -875,8 +875,8 @@ bool TImportForm::Import(enum ListType Type)
 
       // This is for importing from now-actual gofeis.
       AnsiString ImportResults = "";
-      AnsiString Sheets[] = {"Beginner", "Beginner Premiership", "Primary", "Primary Premiership", "Intermediate", "Intermediate Premiership", "Open", "Open Championship"}; // [TODO]: Modern set and treble reel is yet to be supported, as well as Ceili.
-      for (int ish = 0; ish < 8; ++ish)
+      AnsiString Sheets[] = {"Beginner", "Beginner Premiership", "Primary", "Primary Premiership", "Intermediate", "Intermediate Premiership", "Open", "Preliminary Championship", "Open Championship"}; // [TODO]: Modern set and treble reel is yet to be supported, as well as Ceili.
+      for (int ish = 0; ish < 9; ++ish)
       {
         Excel->SelectSheet(Sheets[ish]);
 
@@ -1007,7 +1007,7 @@ bool TImportForm::Import(enum ListType Type)
             ImportWarning->Caption = (AnsiString)"Импорт: " + Data2;
             Application->ProcessMessages();
 
-                 if (Data2 == "Jump 2-3")                                     CurrentDance = Jump23;
+                 if (Data2 == "Beginner Jump 2-3 Reel")                       CurrentDance = Jump23;
             else if (Data2 == "Beginner Reel")                                CurrentDance = BeginnerReel;
             else if (Data2 == "Beginner Light Jig")                           CurrentDance = BeginnerLightJig;
             else if (Data2 == "Beginner Single Jig")                          CurrentDance = BeginnerSingleJig;
