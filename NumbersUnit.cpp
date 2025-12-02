@@ -1686,7 +1686,7 @@ int __fastcall SchoolSortWrapper(TStringList* List, int Index1, int Index2)
 void __fastcall TNumbersForm::ButtonCreateSchoolClick(TObject *Sender)
 {
 
-  bool isChampionshipDay = true; /* NOTE: set this to false for every generic feis! */
+  bool isChampionshipDay = false; /* NOTE: set this to false for every generic feis! */
 
   if (!SaveDialogSchools->Execute()) return;
 
