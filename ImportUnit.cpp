@@ -828,7 +828,7 @@ bool TImportForm::Import(enum ListType Type)
           }
           else /* (what == ltSolo) */
           {
-            AnsiString DancerName  = Excel->GetCell(ExcelRow, 1);
+            AnsiString DancerName  = Excel->GetCell(ExcelRow, 1).Trim();
 
             AnsiString DanceJ23    = Excel->GetCell(ExcelRow, 2);
             AnsiString DanceModSet = Excel->GetCell(ExcelRow, 3);
