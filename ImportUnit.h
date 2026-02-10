@@ -35,6 +35,7 @@ __published:	// IDE-managed Components
   TEdit *AddNameEdit;
   TButton *ResortFigureButton;
         TCheckBox *QualificationCheckBox;
+  TButton *AddFromRawButton;
   void __fastcall ImportListButtonClick(TObject *Sender);
   void __fastcall ImportSoloButtonClick(TObject *Sender);
   void __fastcall ExitButtonClick(TObject *Sender);
@@ -50,6 +51,7 @@ __published:	// IDE-managed Components
   void __fastcall ResortButtonClick(TObject *Sender);
   void __fastcall AddNameEditChange(TObject *Sender);
   void __fastcall ResortFigureButtonClick(TObject *Sender);
+  void __fastcall AddFromRawButtonClick(TObject *Sender);
 private:	// User declarations
   TList *UIDList, *UIDSolo, *UIDGroup;
   enum ListType CurrentPage;

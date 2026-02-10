@@ -45,20 +45,29 @@ object ImportForm: TImportForm
     object ImportListButton: TButton
       Left = 16
       Top = 24
-      Width = 185
+      Width = 89
       Height = 41
-      Caption = 'Dancer List Excel Spreadsheet'
+      Caption = 'DLES'
       TabOrder = 0
       OnClick = ImportListButtonClick
     end
     object ImportSoloButton: TButton
-      Left = 216
+      Left = 112
       Top = 24
       Width = 105
       Height = 41
       Caption = 'Dancers Report'
       TabOrder = 1
       OnClick = ImportSoloButtonClick
+    end
+    object AddFromRawButton: TButton
+      Left = 224
+      Top = 24
+      Width = 97
+      Height = 41
+      Caption = 'Raw-'#1076#1086#1080#1084#1087#1086#1088#1090
+      TabOrder = 2
+      OnClick = AddFromRawButtonClick
     end
   end
   object ListChooseGroup: TRadioGroup

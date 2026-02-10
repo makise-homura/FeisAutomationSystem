@@ -763,6 +763,144 @@ bool TImportForm::Import(enum ListType Type)
       }
       break;
     }
+    case ltGroup:
+    {
+      // Check if we have participants table
+      if (Database->TotalDancers() == 0)
+      {
+        Application->MessageBox("Сначала загрузите файл с участниками феша.","Список участников пуст",MB_OK);
+        rv = false;
+        break;
+      }
+
+      enum ListType what = ltList;
+      int GroupNumber = 0;
+      for(int ExcelRow = 0; ; ExcelRow += 1)
+      {
+        bool ok = false;
+        if(what == ltList)
+        {
+          AnsiString Data = Excel->GetCell(ExcelRow, 0);
+          if (Data == "START IMPORT GROUP") what = ltGroup;
+          if (Data == "START IMPORT SOLO") what = ltSolo;
+          if(what == ltList)
+          {
+            Application->MessageBox("Неверный формат файла.","Неверный формат файла",MB_OK);
+            rv = false;
+            break;
+          }
+          continue;
+        }
+        else
+        {
+          AnsiString School = Excel->GetCell(ExcelRow, 0).Trim();
+          if (School == "") break;
+          if (what == ltGroup)
+          {
+            AnsiString DanceName = Excel->GetCell(ExcelRow, 1).Trim() + " All Ages";
+            AnsiString Team      = Excel->GetCell(ExcelRow, 2).Trim();
+
+            TDancer *Dancer = Database->AddNewDancer();
+            Dancer->isGroup = true;
+            Dancer->Number  = ++GroupNumber;
+            Dancer->Name    = Team;
+            Dancer->School  = School;
+
+            Dancer->Dances[Group2Hand] = false;
+            Dancer->Dances[Group3Hand] = false;
+            Dancer->Dances[Group4Hand] = false;
+            Dancer->Dances[GroupCeili] = false;
+            Dancer->Dances[Group4HandChamp] = false;
+            Dancer->Dances[GroupCeiliChamp] = false;
+
+            enum Dances Dance = GroupDanceTypeToDance(DanceName);
+            if (Dance != nil)
+            {
+              Dancer->Dances[Dance]   = true;
+              Dancer->AgeGroup[Dance] = GroupDanceTypeToAgeGroup(DanceName);
+              ok = true;
+            }
+            if(!ok)
+            {
+              AnsiString errmsg = "У команды " + Team + " из школы " + School + " неверный тип танца: " + DanceName + ". Поправьте танец в таблице.";
+              Application->MessageBox(errmsg.c_str(),"Неверный формат файла",MB_OK);
+            }
+          }
+          else /* (what == ltSolo) */
+          {
+            AnsiString DancerName  = Excel->GetCell(ExcelRow, 1);
+
+            AnsiString DanceJ23    = Excel->GetCell(ExcelRow, 2);
+            AnsiString DanceModSet = Excel->GetCell(ExcelRow, 3);
+            AnsiString DanceTrReel = Excel->GetCell(ExcelRow, 4);
+            AnsiString DanceReel   = Excel->GetCell(ExcelRow, 5);
+            AnsiString DanceLight  = Excel->GetCell(ExcelRow, 6);
+            AnsiString DanceSingle = Excel->GetCell(ExcelRow, 7);
+            AnsiString DanceSlip   = Excel->GetCell(ExcelRow, 8);
+            AnsiString DanceTreble = Excel->GetCell(ExcelRow, 9);
+            AnsiString DanceHorn   = Excel->GetCell(ExcelRow, 10);
+            AnsiString DanceTrad   = Excel->GetCell(ExcelRow, 11);
+            AnsiString DancePrem   = Excel->GetCell(ExcelRow, 12);
+            AnsiString DancePreCh  = Excel->GetCell(ExcelRow, 13);
+            AnsiString DanceChamp  = Excel->GetCell(ExcelRow, 14);
+
+            for(int i = 0; i < Database->TotalDancers(); ++i)
+            {
+              TDancer *Dancer = Database->GetDancerByIndex(i);
+              if (Dancer->isGroup) continue;
+              if (Dancer->Name != DancerName || Dancer->School != School) continue;
+
+              bool *D = Dancer->Dances;
+
+              if(D[Jump23] || D[ModernSet] || D[TrebleReel] || D[BeginnerReel] || D[PrimaryReel] || D[IntermedReel] || D[OpenReel] || D[BeginnerLightJig] || D[PrimaryLightJig] || D[IntermedLightJig] || D[BeginnerSingleJig] || D[PrimarySingleJig] || D[IntermedSingleJig] || D[BeginnerSlipJig] || D[PrimarySlipJig] || D[IntermedSlipJig] || D[OpenSlipJig] || D[BeginnerTrebleJig] || D[PrimaryTrebleJig] || D[IntermedTrebleJig] || D[OpenTrebleJig] || D[BeginnerHornpipe] || D[PrimaryHornpipe] || D[IntermedHornpipe] || D[OpenHornpipe] || D[BeginnerTradSet] || D[PrimaryTradSet] || D[IntermedTradSet] || D[OpenTradSet] || D[BeginnerPremiership] || D[PrimaryPremiership] || D[IntermedPremiership] || D[PreChampionship] || D[Championship])
+              {
+                AnsiString msg = "У участника " + Dancer->Name + " уже есть регистрации. Проверьте!";
+                Application->MessageBox(msg.c_str(),"Ошибка регистраций",MB_OK);
+              }
+
+              if
+              (
+                !ReadBPIO(DanceJ23,    &D[Jump23],              NULL,                   NULL,                    NULL)                || //jump 23
+                !ReadBPIO(DanceModSet, &D[ModernSet],           NULL,                   NULL,                    NULL)                || //mod set
+                !ReadBPIO(DanceTrReel, &D[TrebleReel],          NULL,                   NULL,                    NULL)                || //treb reel
+                !ReadBPIO(DanceReel,   &D[BeginnerReel],        &D[PrimaryReel],        &D[IntermedReel],        &D[OpenReel])        || //reel
+                !ReadBPIO(DanceLight,  &D[BeginnerLightJig],    &D[PrimaryLightJig],    &D[IntermedLightJig],    NULL)                || //light jig
+                !ReadBPIO(DanceSingle, &D[BeginnerSingleJig],   &D[PrimarySingleJig],   &D[IntermedSingleJig],   NULL)                || //single jig
+                !ReadBPIO(DanceSlip,   &D[BeginnerSlipJig],     &D[PrimarySlipJig],     &D[IntermedSlipJig],     &D[OpenSlipJig])     || //slip jig
+                !ReadBPIO(DanceTreble, &D[BeginnerTrebleJig],   &D[PrimaryTrebleJig],   &D[IntermedTrebleJig],   &D[OpenTrebleJig])   || //treble jig
+                !ReadBPIO(DanceHorn,   &D[BeginnerHornpipe],    &D[PrimaryHornpipe],    &D[IntermedHornpipe],    &D[OpenHornpipe])    || //hornpipe
+                !ReadBPIO(DanceTrad,   &D[BeginnerTradSet],     &D[PrimaryTradSet],     &D[IntermedTradSet],     &D[OpenTradSet])     || //trad. set
+                !ReadBPIO(DancePrem,   &D[BeginnerPremiership], &D[PrimaryPremiership], &D[IntermedPremiership], NULL)                || //prem
+                !ReadBPIO(DancePreCh,  NULL,                    NULL,                   NULL,                    &D[PreChampionship]) || //pre chmp
+                !ReadBPIO(DanceChamp,  NULL,                    NULL,                   NULL,                    &D[Championship])       //chmp
+              )
+              {
+                AnsiString msg = "В танцах участника " + Dancer->Name + " указаны неверные уровни.\nВозможно, некоторые из заявленных им танцев добавлены не будут. Проверьте!";
+                Application->MessageBox(msg.c_str(),"Ошибка чтения BPIO",MB_OK);
+              }
+
+              if(!(D[Jump23] || D[ModernSet] || D[TrebleReel] || D[BeginnerReel] || D[PrimaryReel] || D[IntermedReel] || D[OpenReel] || D[BeginnerLightJig] || D[PrimaryLightJig] || D[IntermedLightJig] || D[BeginnerSingleJig] || D[PrimarySingleJig] || D[IntermedSingleJig] || D[BeginnerSlipJig] || D[PrimarySlipJig] || D[IntermedSlipJig] || D[OpenSlipJig] || D[BeginnerTrebleJig] || D[PrimaryTrebleJig] || D[IntermedTrebleJig] || D[OpenTrebleJig] || D[BeginnerHornpipe] || D[PrimaryHornpipe] || D[IntermedHornpipe] || D[OpenHornpipe] || D[BeginnerTradSet] || D[PrimaryTradSet] || D[IntermedTradSet] || D[OpenTradSet] || D[BeginnerPremiership] || D[PrimaryPremiership] || D[IntermedPremiership] || D[PreChampionship] || D[Championship]))
+              {
+                AnsiString msg = "У участника " + Dancer->Name + " не прочитано ни одной регистрации. Проверьте!";
+                Application->MessageBox(msg.c_str(),"Ошибка регистраций",MB_OK);
+              }
+
+              ok = true;
+              break;
+            }
+            if(!ok)
+            {
+              AnsiString errmsg = "Участник " + DancerName + " из школы " + School + " не найден в списке регистраций.";
+              Application->MessageBox(errmsg.c_str(),"Неверный формат файла",MB_OK);
+            }
+
+          }
+        }
+      }
+
+      Application->MessageBox("Импорт завершён успешно.","Готово",MB_OK);
+      break;
+    }
     case ltSolo:
     {
       // (DON'T) Clear every group dances
@@ -1599,5 +1737,14 @@ void __fastcall TImportForm::ResortFigureButtonClick(TObject *Sender)
   TableFromDatabase();
 }
 //---------------------------------------------------------------------------
-
+#pragma argsused
+void __fastcall TImportForm::AddFromRawButtonClick(TObject *Sender)
+{
+  if(!CheckCurrentTable(false)) return;
+  TableToDatabase();
+  if (!Import(ltGroup)) return; /* reuse ltGroup for this purpose */
+  ListChooseGroup->ItemIndex = ltSolo;
+  SwitchToPage();
+}
+//---------------------------------------------------------------------------
 
