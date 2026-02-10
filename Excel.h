@@ -40,7 +40,7 @@ class TExcel
     void CreateSheet(AnsiString Name, bool ClearAllDatabase);
     void DeleteSheet(bool *ClearAllDatabase);
     void SetFontSize(int Size);
-    void SelectSheet(AnsiString Name);
+    bool SelectSheet(AnsiString Name);
     void SetFontColor(TColor Color);
     void SetBkColor(TColor Color);
     void PutPicture(AnsiString FileName, int XPix, int YPix, int WidthPix, int HeightPix);

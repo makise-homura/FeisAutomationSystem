@@ -878,7 +878,12 @@ bool TImportForm::Import(enum ListType Type)
       AnsiString Sheets[] = {"Beginner", "Beginner Premiership", "Primary", "Primary Premiership", "Intermediate", "Intermediate Premiership", "Open", "Preliminary Championship", "Open Championship"}; // [TODO]: Modern set and treble reel is yet to be supported, as well as Ceili.
       for (int ish = 0; ish < 9; ++ish)
       {
-        Excel->SelectSheet(Sheets[ish]);
+        if(!Excel->SelectSheet(Sheets[ish]))
+        {
+          AnsiString sh = "В файле не обнаружена страница " + Sheets[ish] + ". Возможно, на этот танец вообще нет регистраций.";
+          Application->MessageBox(sh.c_str(),"Не обнаружена страница");
+          continue;
+        }
 
         bool Found;
         TDancer *Dancer;

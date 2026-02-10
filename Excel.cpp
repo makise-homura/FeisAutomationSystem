@@ -168,10 +168,18 @@ void TExcel::Join()
   var_Cell.OleProcedure("Merge");
 }
 //---------------------------------------------------------------------------
-void TExcel::SelectSheet(AnsiString Name)
+bool TExcel::SelectSheet(AnsiString Name)
 {
-  var_Sheet = var_Excel.OlePropertyGet("ActiveWorkbook").OlePropertyGet("Worksheets",Name.c_str());
-  var_Sheet.OleProcedure("Activate");
+  try
+  {
+    var_Sheet = var_Excel.OlePropertyGet("ActiveWorkbook").OlePropertyGet("Worksheets",Name.c_str());
+    var_Sheet.OleProcedure("Activate");
+    return true;
+  }
+  catch (...)
+  {
+    return false;
+  }
 }
 //---------------------------------------------------------------------------
 void TExcel::CreateSheet(AnsiString Name, bool ClearAllDatabase)
